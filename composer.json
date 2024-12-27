@@ -1,0 +1,32 @@
+{
+    "name": "spineda/ddd-foundation",
+    "description": "Base library for Domain-Driven Design in PHP",
+    "type": "library",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Samuel Pineda",
+            "email": "sc0149gt@gmail.com"
+        }
+    ],
+    "require": {
+        "ext-json": "*",
+        "dms/phpunit-arraysubset-asserts": "^0.2",
+        "mockery/mockery": "^1.6",
+        "php": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spineda\\DddFoundation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spineda\\DddFoundation\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable"
+}
