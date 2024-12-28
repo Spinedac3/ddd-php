@@ -28,7 +28,7 @@ class GenericException extends Exception
      * @param   int|null    $code      Exception code
      * @param   Exception|null $previous  Previous exception - for nesting
      */
-    public function __construct($message = null, $code = null, $previous = null)
+    public function __construct(?string $message = null, ?int $code = null, ?Exception $previous = null)
     {
         if (null === $message) {
             $message = $this->message;
