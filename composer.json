@@ -13,7 +13,7 @@
         "ext-json": "*",
         "dms/phpunit-arraysubset-asserts": "^0.2",
         "mockery/mockery": "^1.6",
-        "php": "*"
+        "php": "^8.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5"
