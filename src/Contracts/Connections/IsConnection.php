@@ -14,9 +14,9 @@ interface IsConnection
     /**
      * Configure Capsule manager for connect database type
      *
-     * @param Manager $capsule Capsule manager
+     * @param Manager $manager Capsule manager
      *
      * @return void
      */
-    public function preConfigure(Manager $capsule): void;
+    public function preConfigure(Manager $manager): void;
 }
