@@ -113,14 +113,14 @@ abstract class AbstractEntity implements IsCollectable
      *
      * @throws  UnderflowException
      */
-    public function validate()
+    public function validate(): void
     {
         if (!count($this->required)) {
             return;
         }
 
         foreach ($this->required as $required) {
-            if (!isset($this->$required) || null === $this->required) {
+            if (!isset($this->$required)) {
                 throw new UnderflowException(sprintf('El valor de %s no fue proporcionado', $required));
             }
         }
@@ -151,5 +151,19 @@ abstract class AbstractEntity implements IsCollectable
     public function getKey(): string
     {
         return $this->key;
+    }
+
+    /**
+     * Retrieves the value of a specific field
+     *
+     * @param string $field The field name to retrieve.
+     *
+     * @return mixed
+     */
+    public function getField(string $field): mixed
+    {
+        $attributes = get_object_vars($this);
+
+        return $attributes[$field] ?? null;
     }
 }
