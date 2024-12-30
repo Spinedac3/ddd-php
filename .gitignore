@@ -44,6 +44,7 @@ phpunit.xml
 tests/_reports/**
 .scannerwork/**
 /.phpunit.result.cache
+/.php-cs-fixer.cache
 dump.txt
 /tests/configuration.yaml
 /tests/tmp/**
