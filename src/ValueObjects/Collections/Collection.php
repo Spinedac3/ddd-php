@@ -3,6 +3,7 @@
 namespace Spineda\DddFoundation\ValueObjects\Collections;
 
 use Spineda\DddFoundation\Contracts\ValueObjects\Collections\IsCollectable;
+use Spineda\DddFoundation\Entities\AbstractEntity;
 use JsonSerializable;
 use ReturnTypeWillChange;
 use Countable;
@@ -165,7 +166,7 @@ class Collection implements Countable, Iterator, JsonSerializable
      *
      * @return float
      */
-    public function sum(string $field): float
+    public function sumFieldEntity(string $field): float
     {
         // if the collection is empty, return 0.0
         if (empty($this->collection)) {
@@ -175,7 +176,7 @@ class Collection implements Countable, Iterator, JsonSerializable
         // Reduce the collection to a single value
         return array_reduce(
             $this->collection,
-            function (float $carry, IsCollectable $element) use ($field): float {
+            function (float $carry, AbstractEntity $element) use ($field): float {
                 // Adds the value of the field to the carry
                 $value = $element->getField($field);
                 if (is_numeric($value) && $value >= 0) {
