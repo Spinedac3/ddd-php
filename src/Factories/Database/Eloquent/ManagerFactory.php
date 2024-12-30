@@ -10,7 +10,7 @@ use InvalidArgumentException;
 /**
  * Eloquent Capsule Manager Factory
  *
- * @package Proaktiv
+ * @package Spineda\DddFoundation
  */
 abstract class ManagerFactory extends CapsuleFactory
 {
