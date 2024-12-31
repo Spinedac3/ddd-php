@@ -36,8 +36,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutName(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('name');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('name');
     }
 
     /**
@@ -45,8 +45,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutUsername(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('username');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('username');
     }
 
     /**
@@ -54,8 +54,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutPassword(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('password');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('password');
     }
 
     /**
@@ -63,8 +63,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutHost(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('host');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('host');
     }
 
     /**
@@ -72,8 +72,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutDatabase(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('database');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('database');
     }
 
     /**
@@ -81,8 +81,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutDriver(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('driver');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('driver');
     }
 
     /**
@@ -90,8 +90,8 @@ class ConnectionTest extends AbstractEntityUnitTest
      */
     public function testEntityLoadingBreaksWithoutPort(): void
     {
-        $this->expectException(UnderflowException::class);
-        $this->tryToLoadWithoutField('port');
+        static::expectException(UnderflowException::class);
+        static::tryToLoadWithoutField('port');
     }
 
     /**
@@ -104,12 +104,12 @@ class ConnectionTest extends AbstractEntityUnitTest
         $entity = new $this->entityClass($this->dummy);
 
         //test getter methods
-        $this->assertEquals($this->dummy['name'], $entity->getConnectionName());
-        $this->assertEquals($this->dummy['username'], $entity->getUsername());
-        $this->assertEquals($this->dummy['password'], $entity->getPassword());
-        $this->assertEquals($this->dummy['host'], $entity->getHost());
-        $this->assertEquals($this->dummy['database'], $entity->getDBName());
-        $this->assertEquals($this->dummy['driver'], $entity->getDBDriver());
-        $this->assertEquals($this->dummy['port'], $entity->getPort());
+        static::assertEquals($this->dummy['name'], $entity->getConnectionName());
+        static::assertEquals($this->dummy['username'], $entity->getUsername());
+        static::assertEquals($this->dummy['password'], $entity->getPassword());
+        static::assertEquals($this->dummy['host'], $entity->getHost());
+        static::assertEquals($this->dummy['database'], $entity->getDBName());
+        static::assertEquals($this->dummy['driver'], $entity->getDBDriver());
+        static::assertEquals($this->dummy['port'], $entity->getPort());
     }
 }
