@@ -14,6 +14,11 @@ class Connection extends AbstractEntity
     /**
      * @var array
      */
+    protected array $keyFields = [ 'name' ];
+
+    /**
+     * @var array
+     */
     protected array $required = ['name', 'username', 'password', 'host', 'database', 'driver', 'port'];
 
     /**
