@@ -6,7 +6,6 @@ use Countable;
 use Iterator;
 use JsonSerializable;
 use Spineda\DddFoundation\Contracts\ValueObjects\Collections\IsValueObject;
-use UnexpectedValueException;
 
 /**
  * Collection of value objects
@@ -25,11 +24,6 @@ class ValueObjectCollection extends Collection implements Countable, Iterator, J
      */
     public function add(IsValueObject $valueObject): self
     {
-        // Validates it's a value object trying to be added
-        if (!is_a($valueObject, IsValueObject::class)) {
-            throw new UnexpectedValueException('El objeto que se intenta agregar no es un objeto de valor.');
-        }
-
         // Adds a value object to the collection.
         $this->collection[] = $valueObject;
 
