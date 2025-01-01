@@ -52,7 +52,7 @@ class ORMAbstractRepository
      */
     protected function translateOrder(bool $reverse): string
     {
-        return ($reverse ? 'desc' : 'asc');
+        return $reverse ? 'desc' : 'asc';
     }
 
     /**
@@ -93,52 +93,19 @@ class ORMAbstractRepository
     }
 
     /**
-     * Processes the Filters if any, in an Eloquent Builder object, and then returns it.
+     * Process Direct and Like queries
      *
-     * @param Builder $query Builder object to use for processing.
-     * @param ?FiltersInfo $filters If not null the filters to apply.
-     * @param JoinInfo|null $joinInfo If not null the join information to apply.
+     * @param Builder $query
+     * @param FiltersInfo $filters
+     * @param string $table
      *
      * @return Builder
      */
-    protected function processFiltersToQuery(
+    public function processDirectAndLikeQueries(
         Builder $query,
-        FiltersInfo $filters = null,
-        JoinInfo $joinInfo = null
+        FiltersInfo $filters,
+        string $table
     ): Builder {
-        // Only no filters, return query as-is
-        if (null === $filters) {
-            return $query;
-        }
-
-        // Get table name
-        $table = $query->getModel()->getTable();
-        // Get any filters supplied
-        $filterValues = $filters->getFilters()->getValues();
-        // Fills in any filters that might have been supplied.
-        foreach ($filterValues as $column => $value) {
-            if ($value !== null) {
-                $query->where($table . '.' . $column, $value);
-            }
-        }
-
-        // Process Join Information
-        if ($joinInfo != null) {
-            $filtersSecondTableValues = $joinInfo->getFiltersFirstTable()->getFilters()->getValues();
-            $query->join(
-                $joinInfo->getTable1(),
-                $joinInfo->getTable1() . '.' . $joinInfo->getJoinFieldTable1(),
-                '=',
-                $joinInfo->getTable2() . '.' . $joinInfo->getJoinFieldTable2()
-            );
-
-            foreach ($filtersSecondTableValues as $column => $value) {
-                if ($value !== null) {
-                    $query->where($joinInfo->getTable1() . '.' . $column, $value);
-                }
-            }
-        }
-
         // Define Search queries
         $search = $filters->getSearch();
         $queries = $this->unifySearchQueries();
@@ -167,6 +134,55 @@ class ORMAbstractRepository
                 );
             }
         });
+
+        return $query;
+    }
+
+    /**
+     * Processes the Filters if any, in an Eloquent Builder object, and then returns it.
+     *
+     * @param Builder $query Builder object to use for processing.
+     * @param FiltersInfo $filters If not null the filters to apply.
+     * @param JoinInfo|null $joinInfo If not null the join information to apply.
+     * @return Builder
+     */
+    protected function processFiltersToQuery(
+        Builder $query,
+        FiltersInfo $filters,
+        ?JoinInfo $joinInfo = null
+    ): Builder {
+        // Get table name
+        $table = $query->getModel()->getTable();
+
+        // Get any filters supplied
+        $filterValues = $filters->getFilters()->getValues();
+
+        // Fills in any filters that might have been supplied.
+        foreach ($filterValues as $column => $value) {
+            if ($value !== null) {
+                $query->where($table . '.' . $column, $value);
+            }
+        }
+
+        // Process Join Information
+        if ($joinInfo != null) {
+            $filtersSecondTableValues = $joinInfo->getFiltersFirstTable()->getFilters()->getValues();
+            $query->join(
+                $joinInfo->getTable1(),
+                $joinInfo->getTable1() . '.' . $joinInfo->getJoinFieldTable1(),
+                '=',
+                $joinInfo->getTable2() . '.' . $joinInfo->getJoinFieldTable2()
+            );
+
+            foreach ($filtersSecondTableValues as $column => $value) {
+                if ($value !== null) {
+                    $query->where($joinInfo->getTable1() . '.' . $column, $value);
+                }
+            }
+        }
+
+        // Process Search Criteria
+        $this->processDirectAndLikeQueries($query, $filters, $table);
 
         return $query;
     }
