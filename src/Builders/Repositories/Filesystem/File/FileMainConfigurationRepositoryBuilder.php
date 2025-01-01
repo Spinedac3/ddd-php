@@ -18,9 +18,9 @@ use Spineda\DddFoundation\ValueObjects\File;
 abstract class FileMainConfigurationRepositoryBuilder
 {
     /**
-     * @var  MainConfigurationRepository
+     * @var  ?MainConfigurationRepository
      */
-    private static MainConfigurationRepository $repository;
+    private static ?MainConfigurationRepository $repository = null;
 
     /**
      * Builder of main configuration using a YAML file
