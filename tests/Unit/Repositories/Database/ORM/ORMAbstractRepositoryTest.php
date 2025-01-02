@@ -13,6 +13,7 @@ use Spineda\DddFoundation\ValueObjects\Data\FiltersInfo;
 use Spineda\DddFoundation\Exceptions\SearchCriteriaException;
 use ReflectionException;
 use ReflectionClass;
+use Spineda\DddFoundation\ValueObjects\Data\JoinInfo;
 
 /**
  * Tests for the ORMAbstractRepository class
@@ -282,6 +283,36 @@ class ORMAbstractRepositoryTest extends AbstractUnitTest
             $this->repository,
             'validateArgumentsArray',
             [$arguments]
+        );
+    }
+
+    /**
+     * Tests with filters and join info
+     *
+     * @throws ReflectionException
+     * @throws SearchCriteriaException
+     */
+    public function testProcessFiltersToQueryWithFiltersAndJoinInfo(): void
+    {
+        $builder = $this->setUpBuilder();
+        $filters = new FiltersInfo(['f1' => 1, 'f2' => 2], 'table2');
+        $joinInfo = new JoinInfo(
+            'table1',
+            'joinFieldTable1',
+            'table2',
+            'joinFieldTable2',
+            new FiltersInfo(['f3' => 3], 'table1')
+        );
+        $builder->expects($this->exactly(1))
+            ->method('getModel')
+            ->willReturn($this->mockWithoutConstructor(Model::class));
+        $this->callProtectedMethod(
+            ORMAbstractRepository::class,
+            $this->repository,
+            'processFiltersToQuery',
+            [
+                $builder, $filters, $joinInfo
+            ]
         );
     }
 }
