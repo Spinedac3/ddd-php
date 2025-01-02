@@ -3,10 +3,10 @@
 namespace Spineda\DddFoundation\Contracts\Repositories\Filesystem;
 
 use Carbon\Carbon;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Spineda\DddFoundation\ValueObjects\Collections\Filesystem\FileCollection;
 use Spineda\DddFoundation\Contracts\Repositories\AbstractRepository;
 use Spineda\DddFoundation\Contracts\Repositories\Behaviors\DumpableRepository;
-use Spineda\DddFoundation\ValueObjects\Collections\Filesystem\FileCollection;
+use Spineda\DddFoundation\Exceptions\Filesystem\FileNotFoundException;
 use Spineda\DddFoundation\ValueObjects\File;
 
 /**
