@@ -107,7 +107,7 @@ class Collection implements Countable, Iterator, JsonSerializable
         }
 
         // Then, we'll uniform the returned value.
-        return ((string) $key);
+        return (string) $key;
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Spineda\DddFoundation\Repositories\Database\ORM;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Spineda\DddFoundation\Persistencies\Eloquent\AbstractModel;
 use Spineda\DddFoundation\ValueObjects\Data\FiltersInfo;
 use Spineda\DddFoundation\ValueObjects\Data\JoinInfo;
@@ -96,15 +96,15 @@ class ORMAbstractRepository
      * Process Direct and Like queries
      *
      * @param Builder $query
-     * @param FiltersInfo $filters
      * @param string $table
+     * @param FiltersInfo|null $filters
      *
      * @return Builder
      */
     public function processDirectAndLikeQueries(
         Builder $query,
-        FiltersInfo $filters,
-        string $table
+        string $table,
+        ?FiltersInfo $filters = null
     ): Builder {
         // Define Search queries
         $search = $filters->getSearch();
@@ -142,15 +142,20 @@ class ORMAbstractRepository
      * Processes the Filters if any, in an Eloquent Builder object, and then returns it.
      *
      * @param Builder $query Builder object to use for processing.
-     * @param FiltersInfo $filters If not null the filters to apply.
+     * @param FiltersInfo|null $filters If not null the filters to apply.
      * @param JoinInfo|null $joinInfo If not null the join information to apply.
      * @return Builder
      */
     protected function processFiltersToQuery(
         Builder $query,
-        FiltersInfo $filters,
+        ?FiltersInfo $filters = null,
         ?JoinInfo $joinInfo = null
     ): Builder {
+        // Only no filters, return query as-is
+        if (null === $filters) {
+            return $query;
+        }
+
         // Get table name
         $table = $query->getModel()->getTable();
 
@@ -182,7 +187,7 @@ class ORMAbstractRepository
         }
 
         // Process Search Criteria
-        $this->processDirectAndLikeQueries($query, $filters, $table);
+        $this->processDirectAndLikeQueries($query, $table, $filters );
 
         return $query;
     }
