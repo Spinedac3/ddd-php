@@ -1,0 +1,7 @@
+tmpfolder: ./tests/tmp
+dbs:
+  dummy:
+    password: x
+    database: x
+    host: x
+    driver: x

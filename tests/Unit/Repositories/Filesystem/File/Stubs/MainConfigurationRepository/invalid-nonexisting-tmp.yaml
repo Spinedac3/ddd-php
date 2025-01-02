@@ -1,0 +1,11 @@
+tmpfolder: ./tests/tmpnonexisting
+regenerationRoute: 'ruta'
+timezone: 'America/Guatemala'
+dbs:
+  dummy:
+    username: username
+    password: password
+    database: database
+    host: host
+    driver: driver
+    port: port
