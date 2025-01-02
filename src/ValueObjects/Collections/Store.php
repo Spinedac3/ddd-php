@@ -227,7 +227,7 @@ class Store implements JsonSerializable, Contract
         if ($this->context === null) {
             return $name;
         } else {
-            return ($this->context . '.' . $name);
+            return $this->context . '.' . $name;
         }
     }
 

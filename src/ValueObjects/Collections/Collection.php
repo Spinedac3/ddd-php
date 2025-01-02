@@ -88,7 +88,7 @@ class Collection implements Countable, Iterator, JsonSerializable
     {
         $next = next($this->collection);
 
-        return ($next === false ? null : $next);
+        return $next === false ? null : $next;
     }
 
     /**
@@ -118,7 +118,7 @@ class Collection implements Countable, Iterator, JsonSerializable
     public function valid(): bool
     {
         $key = $this->key();
-        return ($key !== null);
+        return $key !== null;
     }
 
     /**

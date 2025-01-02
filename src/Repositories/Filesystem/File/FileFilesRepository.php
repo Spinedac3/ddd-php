@@ -224,10 +224,8 @@ class FileFilesRepository extends AbstractFileRepository implements Contract
             throw new FileNotFoundException($name);
         }
 
-        /** @var File $file */
-        $file = $collection->rewind();
-
-        return $file;
+        /** @var File */
+        return $collection->rewind();
     }
 
     /**

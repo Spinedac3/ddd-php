@@ -121,10 +121,9 @@ class SortInfo implements JsonSerializable, IsString
      */
     public function isSorted(): bool
     {
-        return (
+        return
             $this->order !== 'asc' ||
-            $this->field !== $this->default
-        );
+            $this->field !== $this->default;
     }
 
     /**
@@ -158,6 +157,6 @@ class SortInfo implements JsonSerializable, IsString
      */
     public function isSortedBy(string $field): bool
     {
-        return (strtolower(trim($field)) === $this->field);
+        return strtolower(trim($field)) === $this->field;
     }
 }

@@ -145,7 +145,7 @@ class PaginatedEntityCollection implements JsonSerializable
      */
     public function getFromRecord(): int
     {
-        return (($this->currentPage - 1) * $this->perPage);
+        return ($this->currentPage - 1) * $this->perPage;
     }
 
     /**
@@ -159,9 +159,9 @@ class PaginatedEntityCollection implements JsonSerializable
     public function getToRecord(): int
     {
         if ($this->collection->count() < $this->perPage) {
-            return ($this->getFromRecord() + $this->collection->count());
+            return $this->getFromRecord() + $this->collection->count();
         } else {
-            return ($this->getFromRecord() + $this->perPage);
+            return $this->getFromRecord() + $this->perPage;
         }
     }
 
