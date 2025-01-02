@@ -1,6 +1,6 @@
 <?php
 
-namespace Repositories\Database\ORM;
+namespace Spineda\DddFoundation\Tests\Unit\Repositories\Database\ORM;
 
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
 use Illuminate\Database\Eloquent\Builder;

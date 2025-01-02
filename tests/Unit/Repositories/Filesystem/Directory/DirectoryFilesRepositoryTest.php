@@ -1,6 +1,6 @@
 <?php
 
-namespace Repositories\Filesystem\Directory;
+namespace Spineda\DddFoundation\Tests\Unit\Repositories\Filesystem\Directory;
 
 use Carbon\Carbon;
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
