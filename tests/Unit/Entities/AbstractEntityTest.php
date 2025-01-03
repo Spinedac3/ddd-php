@@ -66,6 +66,7 @@ class AbstractEntityTest extends AbstractUnitTest
         $entityObject->field2 = 3;
 
         static::assertEquals($entityObject, $this->entity->jsonSerialize());
+        static::assertEquals($this->entity->getField('field1'), $this->entity->jsonSerialize()->field1);
     }
 
     /**
