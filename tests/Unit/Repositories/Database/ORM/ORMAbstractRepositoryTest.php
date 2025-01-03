@@ -315,4 +315,71 @@ class ORMAbstractRepositoryTest extends AbstractUnitTest
             ]
         );
     }
+
+    /**
+     * Tests with filters Like And Direct
+     *
+     * @return void
+     * @throws ReflectionException
+     * @throws SearchCriteriaException
+     */
+    public function testProcessDirectAndLikeQueries(): void
+    {
+        $builder = $this->setUpBuilder();
+        $reflection = new ReflectionClass(ORMAbstractRepository::class);
+        $this->setUpEntityProperty(
+            $this->repository,
+            $reflection,
+            'searchFieldsDirect',
+            ['f1', 'f2', 'f3']
+        );
+        $this->setUpEntityProperty(
+            $this->repository,
+            $reflection,
+            'searchFieldsLike',
+            ['f1', 'f2', 'f3']
+        );
+
+        $filters = new FiltersInfo(['f1' => 1, 'f2' => 2], 'table2');
+
+        $builder->expects($this->any())
+            ->method('getModel')
+            ->willReturn($this->mockWithoutConstructor(Model::class));
+
+        // Add expectations for where and orWhere methods
+        $builder->expects($this->exactly(1))
+            ->method('where')
+            ->with($this->callback(function ($callback) use ($builder) {
+                $query = $this->getMockBuilder(Builder::class)
+                    ->disableOriginalConstructor()
+                    ->getMock();
+                $query->expects($this->exactly(1))
+                    ->method('where')
+                    ->with(
+                        $this->callback(function ($field) {
+                            return $field === 'test.f1';
+                        }),
+                        $this->callback(function ($operator) {
+                            return $operator === 'LIKE';
+                        }),
+                        $this->callback(function ($value) {
+                            return $value === '%table2%';
+                        }),
+                        $this->callback(function ($logical) {
+                            return $logical === 'and';
+                        })
+                    );
+                $callback($query);
+                return true;
+            }));
+
+        $this->callProtectedMethod(
+            ORMAbstractRepository::class,
+            $this->repository,
+            'processDirectAndLikeQueries',
+            [
+                $builder, 'test', $filters
+            ]
+        );
+    }
 }

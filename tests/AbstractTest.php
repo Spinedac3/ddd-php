@@ -62,7 +62,6 @@ abstract class AbstractTest extends TestCase
     {
         $reflection = new ReflectionClass($class);
         $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
 
         return $method->invokeArgs($object, $parameters);
     }
@@ -85,9 +84,7 @@ abstract class AbstractTest extends TestCase
         mixed $propertyValue
     ): void {
         $requiredProperty = $reflection->getProperty($propertyName);
-        $requiredProperty->setAccessible(true);
         $requiredProperty->setValue($object, $propertyValue);
-        $requiredProperty->setAccessible(false);
     }
 
     /**
@@ -104,11 +101,7 @@ abstract class AbstractTest extends TestCase
         $reflection = new ReflectionClass($object);
         $theProperty = $reflection->getProperty($property);
 
-        $theProperty->setAccessible(true);
-        $propertyValue = $theProperty->getValue($object);
-        $theProperty->setAccessible(false);
-
-        return $propertyValue;
+        return $theProperty->getValue($object);
     }
 
     /**

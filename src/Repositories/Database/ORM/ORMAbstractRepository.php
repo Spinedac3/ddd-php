@@ -187,7 +187,7 @@ class ORMAbstractRepository
         }
 
         // Process Search Criteria
-        $this->processDirectAndLikeQueries($query, $table, $filters );
+        $this->processDirectAndLikeQueries($query, $table, $filters);
 
         return $query;
     }
