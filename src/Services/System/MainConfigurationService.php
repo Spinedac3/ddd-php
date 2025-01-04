@@ -16,18 +16,18 @@ use Spineda\DddFoundation\Exceptions\System\MainConfiguration\MainConfigurationR
 abstract class MainConfigurationService implements IsService
 {
     /**
-     * @var MainConfigurationRepository
+     * @var ?MainConfigurationRepository
      */
-    protected static MainConfigurationRepository $repository;
+    protected static ?MainConfigurationRepository $repository = null;
 
     /**
      * Sets the repository
      *
-     * @param  MainConfigurationRepository  $repository
+     * @param  ?MainConfigurationRepository  $repository
      *
      * @return void
      */
-    public static function setRepository(MainConfigurationRepository $repository): void
+    public static function setRepository(?MainConfigurationRepository $repository): void
     {
         static::$repository = $repository;
     }
