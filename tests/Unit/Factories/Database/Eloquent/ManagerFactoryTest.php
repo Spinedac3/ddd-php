@@ -116,13 +116,14 @@ class ManagerFactoryTest extends AbstractUnitTest
         $propertyName = $this->factoryClassName;
 
         $getMethod = $this->getMethod;
+        $createMethod = $this->createMethod;
 
         // mock preConfigure method
         $this->mysqlConnection->shouldReceive('preConfigure');
 
         // Retrieves two new base objects.
         $repo1 = $propertyName::$getMethod($this->mysqlConnection, 'dummy', true);
-        $repo2 = $propertyName::$getMethod($this->mysqlConnection, 'dummy', false);
+        $repo2 = $propertyName::$createMethod($this->mysqlConnection, 'dummy', false);
 
         // Asserts that the correct class was retrieved.
         static::assertInstanceOf(
@@ -153,13 +154,14 @@ class ManagerFactoryTest extends AbstractUnitTest
         $propertyName = $this->factoryClassName;
 
         $getMethod = $this->getMethod;
+        $createMethod = $this->createMethod;
 
         // mock preConfigure method
         $this->sqlServerConnection->shouldReceive('preConfigure');
 
         // Retrieves two new base objects.
         $repo1 = $propertyName::$getMethod($this->sqlServerConnection, 'dummy', true);
-        $repo2 = $propertyName::$getMethod($this->sqlServerConnection, 'dummy', false);
+        $repo2 = $propertyName::$createMethod($this->sqlServerConnection, 'dummy', false);
 
         // Asserts that the correct class was retrieved.
         static::assertInstanceOf(
