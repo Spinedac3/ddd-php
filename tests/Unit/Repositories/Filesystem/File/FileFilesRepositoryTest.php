@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 use Spineda\DddFoundation\Exceptions\Filesystem\DirectoryNotFoundException;
 use Spineda\DddFoundation\Exceptions\Filesystem\FileNotFoundException;
+use Spineda\DddFoundation\Exceptions\Filesystem\InvalidDateFormatException;
 use Spineda\DddFoundation\Repositories\Filesystem\File\FileFilesRepository;
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
 use Spineda\DddFoundation\ValueObjects\Collections\Filesystem\FileCollection;
@@ -277,5 +278,59 @@ class FileFilesRepositoryTest extends AbstractUnitTest
 
         $this->repository->dumpToFile(new File($target));
         static::assertFileExists($target);
+    }
+
+    /**
+     * Tests getting the month from a string invalid format
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testGetMonthFromStrInvalidFormat(): void
+    {
+        static::expectException(Exception::class);
+        $this->callProtectedMethod(
+            InvalidDateFormatException::class,
+            $this->repository,
+            'getMonthFromStr',
+            [ 'invalid' ]
+        );
+    }
+
+    /**
+     * Tests if the repository correctly matches a file name parameter
+     *
+     * @throws Exception
+     */
+    public function testFilterFunctionMatchesFileName(): void
+    {
+        $fileMock = $this->createMock(File::class);
+        $fileMock->method('getBaseName')
+            ->willReturn('example.txt');
+
+        $collectionMock = $this->createMock(FileCollection::class);
+
+        $collectionMock->method('rewind')
+            ->willReturn($fileMock);
+
+        $collectionMock->method('count')
+            ->willReturn(1);
+
+        $repositoryMock = $this->getMockBuilder(FileFilesRepository::class)
+            ->onlyMethods(['getFiles'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repositoryMock->method('getFiles')
+            ->willReturnCallback(function ($filterFunction, $params) use ($fileMock, $collectionMock) {
+                $result = $filterFunction($fileMock, $params);
+                $this->assertTrue($result, 'No retorno el valor esperado.');
+                return $collectionMock;
+            });
+
+        $file = $repositoryMock->get('example.txt');
+
+        $this->assertInstanceOf(File::class, $file);
+        $this->assertEquals('example.txt', $file->getBaseName());
     }
 }

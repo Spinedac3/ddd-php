@@ -6,7 +6,6 @@ use Carbon\Carbon;
 use Spineda\DddFoundation\Contracts\ValueObjects\Collections\IsValueObject;
 use Spineda\DddFoundation\ValueObjects\Collections\ValueObjectCollection;
 use Spineda\DddFoundation\ValueObjects\File;
-use UnexpectedValueException;
 
 /**
  * Collection of files in a filesystem
@@ -23,10 +22,6 @@ class FileCollection extends ValueObjectCollection
      */
     public function add(IsValueObject $valueObject): ValueObjectCollection
     {
-        if (!is_a($valueObject, File::class)) {
-            throw new UnexpectedValueException('El objeto que se intenta agregar no es un archivo (File ValueObject).');
-        }
-
         return parent::add($valueObject);
     }
 
