@@ -233,4 +233,41 @@ class EntityCollectionTest extends AbstractUnitTest
 
         static::assertNull($this->collection->getSubArrayByField('field3'));
     }
+
+    /**
+     * Test remove by key
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testRemoveByKey(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 2], '2');
+
+        $this->collection->add($entity1)
+            ->add($entity2);
+
+
+        $this->collection->removeByKey('1');
+
+        static::assertEquals(1, $this->collection->count());
+    }
+
+    /**
+     * test get last element
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testGetLastElement(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 2], '2');
+
+        $this->collection->add($entity1)
+            ->add($entity2);
+
+        static::assertEquals($entity2, $this->collection->end());
+    }
 }
