@@ -270,4 +270,14 @@ class EntityCollectionTest extends AbstractUnitTest
 
         static::assertEquals($entity2, $this->collection->end());
     }
+
+    /**
+     * test get last element in empty collection
+     *
+     * @return void
+     */
+    public function testGetLastElementInEmptyCollection(): void
+    {
+        static::assertNull($this->collection->end());
+    }
 }
