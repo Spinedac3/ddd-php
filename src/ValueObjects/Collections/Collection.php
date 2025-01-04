@@ -148,18 +148,6 @@ class Collection implements Countable, Iterator, JsonSerializable
     }
 
     /**
-     * Return field of the collection
-     *
-     * @param string $field
-     *
-     * @return mixed
-     */
-    public function getField(string $field): mixed
-    {
-        return $this->{$field} ?? null;
-    }
-
-    /**
      * Sums the value by field in this collection
      *
      * @param string $field
@@ -236,30 +224,6 @@ class Collection implements Countable, Iterator, JsonSerializable
             }
 
             $subArray[] = $element->$field;
-        }
-
-        return $subArray;
-    }
-
-    /**
-     * Returns a sub array with fields values
-     *
-     * @param string $field
-     *
-     * @return ?array
-     */
-    public function getSubArrayByFieldWithIdIndex(string $field): ?array
-    {
-        $subArray = [];
-
-        $serializedCollection =  $this->jsonSerialize();
-
-        foreach ($serializedCollection as $element) {
-            if (!isset($element->$field)) {
-                return null;
-            }
-
-            $subArray[$element->id] = $element->$field;
         }
 
         return $subArray;
