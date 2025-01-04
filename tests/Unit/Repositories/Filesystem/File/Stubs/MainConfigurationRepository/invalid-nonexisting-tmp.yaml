@@ -1,5 +1,4 @@
 tmpfolder: ./tests/tmpnonexisting
-regenerationRoute: 'ruta'
 timezone: 'America/Guatemala'
 dbs:
   dummy:

@@ -1,10 +1,6 @@
 tmpfolder: ./tests/tmp
-regenerationRoute: 'ruta'
 timezone: 'America/Guatemala'
 PDFFolder: '../pdf/'
-ZeroBoxPhotoFolder: '../zerobox/'
-Authority: 'dev.erp.tataguatemala.com:port'
-Protocol: 'https://'
 dbs:
   dummy:
     name: dummy

@@ -1,4 +1,3 @@
-regenerationRoute: 'ruta'
 timezone: 'America/Guatemala'
 dbs:
   dummy:
@@ -7,3 +6,4 @@ dbs:
     database: x
     host: x
     driver: x
+    port: x
