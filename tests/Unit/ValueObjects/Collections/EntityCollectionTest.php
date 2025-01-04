@@ -5,6 +5,7 @@ namespace Spineda\DddFoundation\Tests\Unit\ValueObjects\Collections;
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Spineda\DddFoundation\Tests\Unit\Stubs\ConcreteEntitySuccessfulGetKey;
 use Spineda\DddFoundation\ValueObjects\Collections\EntityCollection;
 use Spineda\DddFoundation\Entities\AbstractEntity;
 use ReflectionClass;
@@ -158,18 +159,21 @@ class EntityCollectionTest extends AbstractUnitTest
 
     /**
      * Tests the sum of a field in the entities
-     *
-     * @throws  ReflectionException
      */
     public function testSumFieldEntity(): void
     {
-        static::expectException(OverflowException::class);
-        $entity = $this->createStubEntity([ 'field1' ], [ 'field1' ], [ 'field1' => 3], '1');
+        $entity1 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 1,
+            'field2' => 3
+        ]);
 
-        // Inserts the entity twice
-        $this->collection
-            ->add($entity)
-            ->add($entity);
+        $entity2 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 2,
+            'field2' => 3
+        ]);
+
+        $this->collection->add($entity1)
+            ->add($entity2);
 
         static::assertEquals(6, $this->collection->sumFieldEntity('field2'));
     }
