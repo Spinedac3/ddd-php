@@ -155,4 +155,22 @@ class EntityCollectionTest extends AbstractUnitTest
 
         static::assertEquals([$entityObject1, $entityObject2], $this->collection->jsonSerialize());
     }
+
+    /**
+     * Tests the sum of a field in the entities
+     *
+     * @throws  ReflectionException
+     */
+    public function testSumFieldEntity(): void
+    {
+        static::expectException(OverflowException::class);
+        $entity = $this->createStubEntity([ 'field1' ], [ 'field1' ], [ 'field1' => 3], '1');
+
+        // Inserts the entity twice
+        $this->collection
+            ->add($entity)
+            ->add($entity);
+
+        static::assertEquals(6, $this->collection->sumFieldEntity('field2'));
+    }
 }
