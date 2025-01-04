@@ -177,4 +177,60 @@ class EntityCollectionTest extends AbstractUnitTest
 
         static::assertEquals(6, $this->collection->sumFieldEntity('field2'));
     }
+
+    /**
+     * Tests the sum of a field in the entities when the collection is empty
+     *
+     * @return void
+     */
+    public function testSumFieldEntityEmpty(): void
+    {
+        static::assertEquals(0, $this->collection->sumFieldEntity('field2'));
+    }
+
+    /**
+     * Tests get sub array by field
+     *
+     * @return void
+     */
+    public function testGetSubArrayByField(): void
+    {
+        $entity1 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 1,
+            'field2' => 3
+        ]);
+
+        $entity2 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 2,
+            'field2' => 3
+        ]);
+
+        $this->collection->add($entity1)
+            ->add($entity2);
+
+        static::assertEquals([3, 3], $this->collection->getSubArrayByField('field2'));
+    }
+
+    /**
+     * Tests get sub array by field when the field does not exist
+     *
+     * @return void
+     */
+    public function testGetSubArrayByFieldReturnNull(): void
+    {
+        $entity1 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 1,
+            'field2' => 3
+        ]);
+
+        $entity2 = new ConcreteEntitySuccessfulGetKey([
+            'field1' => 2,
+            'field2' => 3
+        ]);
+
+        $this->collection->add($entity1)
+            ->add($entity2);
+
+        static::assertNull($this->collection->getSubArrayByField('field3'));
+    }
 }
