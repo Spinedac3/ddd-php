@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager;
 use Mockery\MockInterface;
 use Spineda\DddFoundation\Connections\MySQLConnection;
 use Spineda\DddFoundation\Connections\SQLServerConnection;
+use Spineda\DddFoundation\Contracts\Connections\IsConnection;
 use Spineda\DddFoundation\Contracts\IsFactory;
 use Spineda\DddFoundation\Factories\Database\Eloquent\ManagerFactory;
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
@@ -55,6 +56,11 @@ class ManagerFactoryTest extends AbstractUnitTest
     protected MockInterface $sqlServerConnection;
 
     /**
+     * @var Manager|MockInterface $manager
+     */
+    protected Manager | MockInterface $manager;
+
+    /**
      * {@inheritDoc}
      *
      * @throws ReflectionException
@@ -68,6 +74,7 @@ class ManagerFactoryTest extends AbstractUnitTest
         // Mock Dependencies
         $this->mysqlConnection = $this->mock(MySQLConnection::class);
         $this->sqlServerConnection = $this->mock(SQLServerConnection::class);
+        $this->manager = $this->mock(Manager::class);
 
         // Resets the internal property.
         $this->resetProperty();
@@ -216,6 +223,32 @@ class ManagerFactoryTest extends AbstractUnitTest
             $repo1,
             $repo3,
             'Las instancias de ' . basename($this->producedClassName) . ' deben ser iguales'
+        );
+    }
+
+    /**
+     * Tests that the instance is a connection
+     *
+     * @return void
+     */
+    public function testValidateInstanceIsConnection(): void
+    {
+        // Retrieves two new base objects.
+        $repo1 = new MySQLConnection();
+        $repo1->preConfigure($this->manager);
+        $repo2 = new SQLServerConnection();
+        $repo2->preConfigure($this->manager);
+
+        // Asserts that the correct class was retrieved.
+        static::assertInstanceOf(
+            IsConnection::class,
+            $repo1,
+            'Debió haber regresado una instancia de IsConnection'
+        );
+        static::assertInstanceOf(
+            IsConnection::class,
+            $repo2,
+            'Debió haber regresado una instancia de IsConnection'
         );
     }
 }
