@@ -280,4 +280,86 @@ class EntityCollectionTest extends AbstractUnitTest
     {
         static::assertNull($this->collection->end());
     }
+
+    /**
+     * test strict merge
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testStrictMerge(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 2], '2');
+
+        $this->collection
+            ->add($entity2);
+
+        $this->collection->strictMerge($entity1);
+
+        static::assertEquals(2, $this->collection->count());
+    }
+
+    /**
+     * test strict merge with same key
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testStrictMergeWithSameKey(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+
+        $this->collection
+            ->add($entity2);
+
+        $this->collection->strictMerge($entity1);
+
+        static::assertEquals(1, $this->collection->count());
+    }
+
+    /**
+     * test strict merge entity collection
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testStrictMergeEntityCollection(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 2], '2');
+
+        $this->collection
+            ->add($entity1);
+
+        $entityCollection = new EntityCollection();
+        $entityCollection->add($entity2);
+
+        $this->collection->strictMergeEntityCollection($entityCollection);
+
+        static::assertEquals(2, $this->collection->count());
+    }
+
+    /**
+     * test strict merge entity collection with same key
+     *
+     * @return void
+     * @throws ReflectionException
+     */
+    public function testStrictMergeEntityCollectionWithSameKey(): void
+    {
+        $entity1 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+        $entity2 = $this->createStubEntity(['field1'], ['field1'], ['field1' => 1], '1');
+
+        $this->collection
+            ->add($entity1);
+
+        $entityCollection = new EntityCollection();
+        $entityCollection->add($entity2);
+
+        $this->collection->strictMergeEntityCollection($entityCollection);
+
+        static::assertEquals(1, $this->collection->count());
+    }
 }
