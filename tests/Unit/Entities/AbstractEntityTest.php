@@ -6,6 +6,7 @@ use Spineda\DddFoundation\Entities\AbstractEntity;
 use Spineda\DddFoundation\Tests\Unit\AbstractUnitTest;
 use Spineda\DddFoundation\Tests\Unit\Stubs\ConcreteEntitySuccessfulGetKey;
 use Spineda\DddFoundation\Tests\Unit\Stubs\ConcreteEntityUnderflowValidation;
+use Spineda\DddFoundation\Tests\Unit\Stubs\ConcreteEntityWithoutKeys;
 use Spineda\DddFoundation\Tests\Unit\Stubs\ConcreteEntityWithoutNonEntityProperties;
 use UnderflowException;
 use stdClass;
@@ -53,6 +54,8 @@ class AbstractEntityTest extends AbstractUnitTest
 
     /**
      * Tests JSON serialization
+     *
+     * @return void
      */
     public function testSuccessfulJSONSerialization(): void
     {
@@ -71,6 +74,8 @@ class AbstractEntityTest extends AbstractUnitTest
 
     /**
      * Tests JSON serialization
+     *
+     * @return void
      */
     public function testSuccessfulJSONSerializationWithoutNotEntityProperties(): void
     {
@@ -86,6 +91,26 @@ class AbstractEntityTest extends AbstractUnitTest
         $entityObject->nonEntityProperties = [];
         $entityObject->keyFields = ['field1'];
         $entityObject->required = ['key'];
+
+        static::assertEquals($entityObject, $this->entity->jsonSerialize());
+    }
+
+    /**
+     * Tests JSON serialization
+     *
+     * @return void
+     */
+    public function testSuccessfulJSONSerializationWithoutKeysEntity(): void
+    {
+        $this->entity = new ConcreteEntityWithoutKeys([
+            'field1' => 1,
+            'field2' => 3
+        ]);
+
+        $entityObject = new stdClass();
+
+        $entityObject->field1 = 1;
+        $entityObject->field2 = 3;
 
         static::assertEquals($entityObject, $this->entity->jsonSerialize());
     }
