@@ -3,7 +3,6 @@
 namespace Spineda\DddFoundation\ValueObjects\Collections\Filesystem;
 
 use Carbon\Carbon;
-use Spineda\DddFoundation\Contracts\ValueObjects\Collections\IsValueObject;
 use Spineda\DddFoundation\ValueObjects\Collections\ValueObjectCollection;
 use Spineda\DddFoundation\ValueObjects\File;
 
@@ -14,17 +13,6 @@ use Spineda\DddFoundation\ValueObjects\File;
  */
 class FileCollection extends ValueObjectCollection
 {
-    /**
-     * {@inheritDoc}
-     *
-     * @see ValueObjectCollection::add()
-     * @return ValueObjectCollection
-     */
-    public function add(IsValueObject $valueObject): ValueObjectCollection
-    {
-        return parent::add($valueObject);
-    }
-
     /**
      * Gets the max modified date of the files in the collection
      *

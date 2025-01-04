@@ -288,9 +288,9 @@ class FileFilesRepositoryTest extends AbstractUnitTest
      */
     public function testGetMonthFromStrInvalidFormat(): void
     {
-        static::expectException(Exception::class);
-        $this->callProtectedMethod(
-            InvalidDateFormatException::class,
+        static::expectException(InvalidDateFormatException::class);
+        $file1 = $this->callProtectedMethod(
+            FileFilesRepository::class,
             $this->repository,
             'getMonthFromStr',
             [ 'invalid' ]
