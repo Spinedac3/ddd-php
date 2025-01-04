@@ -12,6 +12,11 @@ use Spineda\DddFoundation\Entities\AbstractEntity;
 class ConcreteEntityWithoutKeys extends AbstractEntity
 {
     /**
+     * @var array
+     */
+    protected array $required = [];
+
+    /**
      * @var mixed
      */
     protected mixed $field1;
