@@ -1,0 +1,2 @@
+tmpfolder: ./tests/tmp
+dbs: dummy

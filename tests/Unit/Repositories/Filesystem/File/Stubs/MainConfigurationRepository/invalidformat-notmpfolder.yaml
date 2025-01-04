@@ -1,0 +1,9 @@
+timezone: 'America/Guatemala'
+dbs:
+  dummy:
+    username: x
+    password: x
+    database: x
+    host: x
+    driver: x
+    port: x

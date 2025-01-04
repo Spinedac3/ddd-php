@@ -1,0 +1,10 @@
+tmpfolder: ./tests/tmp
+timezone: 'America/Guatemala'
+dbs:
+  dummy:
+    name: dummy
+    username: username
+    password: password
+    host: host
+    driver: driver
+    database: database

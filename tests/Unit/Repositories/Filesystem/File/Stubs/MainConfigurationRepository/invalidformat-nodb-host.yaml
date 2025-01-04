@@ -1,0 +1,8 @@
+tmpfolder: ./tests/tmp
+timezone: 'America/Guatemala'
+dbs:
+  dummy:
+    username: x
+    password: x
+    database: x
+    driver: x

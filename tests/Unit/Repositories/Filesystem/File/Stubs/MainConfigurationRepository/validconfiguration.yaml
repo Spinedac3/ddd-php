@@ -1,0 +1,12 @@
+tmpfolder: ./tests/tmp
+timezone: 'America/Guatemala'
+PDFFolder: '../pdf/'
+dbs:
+  dummy:
+    name: dummy
+    username: username
+    password: password
+    host: host
+    driver: driver
+    database: database
+    port: port

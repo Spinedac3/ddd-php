@@ -1,0 +1,9 @@
+total 0
+drwxr-xr-x 1 root root   544 Nov 17 19:56 .
+drwxr-xr-x 1 root root   160 Sep 29 20:39 ..
+drwxr-xr-x 1 root root   320 Jan  1 00:01 file.xml
+-rw-r--r-- 1 root root 43862 Jan  1 00:01 .phpunit.result.cache
+drwxr-xr-x 1 root root   352 Dec 31 23:59 readme.md
+drwxr-xr-x 1 root root   352 Dec 31 23:59 tests
+drwxr-xr-x 1 root root   672 Jan  1  2018 file.xml
+drwxr-xr-x 1 root root   672 Nov 17  2018 old
