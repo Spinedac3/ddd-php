@@ -24,6 +24,18 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
     protected array $configuration;
 
     /**
+     * @var array|string[]
+     */
+    protected array $requiredKeys = [
+        'username',
+        'password',
+        'database',
+        'port',
+        'host',
+        'driver',
+    ];
+
+    /**
      * FileMainConfigurationRepository constructor.
      *
      * @param  File    $file    File configuration
@@ -51,6 +63,28 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
     }
 
     /**
+     * Validates the database configuration
+     *
+     * @return bool
+     */
+    public function validateDatabaseConfiguration(): bool
+    {
+        if (!isset($this->configuration['dbs']) || !is_array($this->configuration['dbs'])) {
+            return false;
+        }
+
+        foreach ($this->configuration['dbs'] as $configuration) {
+            foreach ($this->requiredKeys as $key) {
+                if (!isset($configuration[$key])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Validates the provided file with the expected connection name and other required parameters
      *
      * @return  bool
@@ -58,23 +92,6 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
      */
     protected function validateConfiguration(): bool
     {
-        if (!isset($this->configuration['dbs']) || !is_array($this->configuration['dbs'])) {
-            return false;
-        }
-
-        foreach ($this->configuration['dbs'] as $configuration) {
-            if (
-                !isset($configuration['username'])
-                || !isset($configuration['password'])
-                || !isset($configuration['database'])
-                || !isset($configuration['port'])
-                || !isset($configuration['host'])
-                || !isset($configuration['driver'])
-            ) {
-                return false;
-            }
-        }
-
         if (
             !isset($this->configuration['tmpfolder'])
             || !isset($this->configuration['timezone'])
@@ -88,7 +105,7 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
             throw new DirectoryNotFoundException($tmpFolder);
         }
 
-        return true;
+        return $this->validateDatabaseConfiguration();
     }
 
     /**
