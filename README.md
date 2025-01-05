@@ -1,6 +1,6 @@
 # DDD for PHP
 
-[![Build Status](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/?branch=main)
 
 ## What is this?
 
