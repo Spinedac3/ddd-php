@@ -24,6 +24,18 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
     protected array $configuration;
 
     /**
+     * @var array|string[]
+     */
+    protected array $requiredKeys = [
+        'username',
+        'password',
+        'database',
+        'port',
+        'host',
+        'driver',
+    ];
+
+    /**
      * FileMainConfigurationRepository constructor.
      *
      * @param  File    $file    File configuration
@@ -62,15 +74,10 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
         }
 
         foreach ($this->configuration['dbs'] as $configuration) {
-            if (
-                !isset($configuration['username'])
-                || !isset($configuration['password'])
-                || !isset($configuration['database'])
-                || !isset($configuration['port'])
-                || !isset($configuration['host'])
-                || !isset($configuration['driver'])
-            ) {
-                return false;
+            foreach ($this->requiredKeys as $key) {
+                if (!isset($configuration[$key])) {
+                    return false;
+                }
             }
         }
 
