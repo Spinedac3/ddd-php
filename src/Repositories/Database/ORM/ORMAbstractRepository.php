@@ -139,6 +139,31 @@ class ORMAbstractRepository
     }
 
     /**
+     * Apply Join Information to Query
+     *
+     * @param Builder $query
+     * @param JoinInfo $joinInfo
+     *
+     * @return void
+     */
+    private function applyJoinInfoToQuery(Builder $query, JoinInfo $joinInfo): void
+    {
+        $filtersSecondTableValues = $joinInfo->getFiltersFirstTable()->getFilters()->getValues();
+        $query->join(
+            $joinInfo->getTable1(),
+            $joinInfo->getTable1() . '.' . $joinInfo->getJoinFieldTable1(),
+            '=',
+            $joinInfo->getTable2() . '.' . $joinInfo->getJoinFieldTable2()
+        );
+
+        foreach ($filtersSecondTableValues as $column => $value) {
+            if ($value !== null) {
+                $query->where($joinInfo->getTable1() . '.' . $column, $value);
+            }
+        }
+    }
+
+    /**
      * Processes the Filters if any, in an Eloquent Builder object, and then returns it.
      *
      * @param Builder $query Builder object to use for processing.
@@ -171,19 +196,7 @@ class ORMAbstractRepository
 
         // Process Join Information
         if ($joinInfo != null) {
-            $filtersSecondTableValues = $joinInfo->getFiltersFirstTable()->getFilters()->getValues();
-            $query->join(
-                $joinInfo->getTable1(),
-                $joinInfo->getTable1() . '.' . $joinInfo->getJoinFieldTable1(),
-                '=',
-                $joinInfo->getTable2() . '.' . $joinInfo->getJoinFieldTable2()
-            );
-
-            foreach ($filtersSecondTableValues as $column => $value) {
-                if ($value !== null) {
-                    $query->where($joinInfo->getTable1() . '.' . $column, $value);
-                }
-            }
+            $this->applyJoinInfoToQuery($query, $joinInfo);
         }
 
         // Process Search Criteria
