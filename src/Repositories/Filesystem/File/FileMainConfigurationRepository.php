@@ -51,12 +51,11 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
     }
 
     /**
-     * Validates the provided file with the expected connection name and other required parameters
+     * Validates the database configuration
      *
-     * @return  bool
-     * @throws  DirectoryNotFoundException
+     * @return bool
      */
-    protected function validateConfiguration(): bool
+    public function validateDatabaseConfiguration(): bool
     {
         if (!isset($this->configuration['dbs']) || !is_array($this->configuration['dbs'])) {
             return false;
@@ -75,6 +74,17 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
             }
         }
 
+        return true;
+    }
+
+    /**
+     * Validates the provided file with the expected connection name and other required parameters
+     *
+     * @return  bool
+     * @throws  DirectoryNotFoundException
+     */
+    protected function validateConfiguration(): bool
+    {
         if (
             !isset($this->configuration['tmpfolder'])
             || !isset($this->configuration['timezone'])
@@ -88,7 +98,7 @@ class FileMainConfigurationRepository extends AbstractFileRepository implements 
             throw new DirectoryNotFoundException($tmpFolder);
         }
 
-        return true;
+        return $this->validateDatabaseConfiguration();
     }
 
     /**
