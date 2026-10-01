@@ -10,12 +10,12 @@ namespace Spineda\DddFoundation\Contracts;
 interface IsFactory
 {
     /**
-     * @return IsFactory
+     * @return mixed
      */
-    public static function get(): IsFactory;
+    public static function get(): mixed;
 
     /**
-     * @return IsFactory
+     * @return mixed
      */
-    public static function create(): IsFactory;
+    public static function create(): mixed;
 }
