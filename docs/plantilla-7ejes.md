@@ -3,7 +3,7 @@
 estado: BORRADOR | APROBADA por ___ el ___
 (el sha256 lo congela `recibo.sh rojo`; cambiarla después exige causa escrita en el PR)
 
-> Un ejemplo completo y llenado de esta plantilla: [`docs/specs/12/issue.md`](specs/12/issue.md).
+> Un ejemplo completo y llenado de esta plantilla: el [issue #3](https://github.com/Spinedac3/ddd-php/issues/3) de este repositorio.
 
 **Dónde vive.** El issue de GitHub es la spec canónica (colaboración); lo que se congela y se
 commitea es el **dump del issue bajado por API** — `docs/specs/<n>/issue.md` (metadatos +

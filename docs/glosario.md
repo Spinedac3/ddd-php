@@ -8,14 +8,13 @@ Cada fila dice qué ES la palabra (tabla, columna y conexión exactas), qué **N
 homónimo que ya confundió a alguien) y la evidencia que lo sostiene. Las cifras medidas no van
 acá: caducan — van en la spec del issue que las midió.
 
-La base no trae dominio propio, así que las filas de abajo son un **ejemplo inventado** de la
-forma. Reemplazalas por las de tu proyecto.
+Las filas de abajo salen del dominio de muestra `Shipping`. Reemplazalas por las de tu
+proyecto.
 
 | palabra del negocio | qué ES | qué NO es | evidencia |
 |---|---|---|---|
-| **conductor** | `hr_driver` (conexión `hr`): el padrón de personas habilitadas para manejar | `driver_assignment`: esa tabla es la *asignación* de un conductor a una ruta, no el conductor | `src/Entities/Shipping/Driver.php` · D1 del issue de ejemplo |
-| **nombre del conductor** | `hr_driver.first_name` + `last_name` — vive en el padrón | no hay columna de nombre en `driver_assignment`: buscar por nombre ahí compara texto con códigos | [`docs/specs/12/issue.md`](specs/12/issue.md), eje 1 |
-| **ruta** | `route` (conexión `shipping`): el recorrido planificado | el *viaje* de un día concreto, que es otra tabla | — |
+| **conductor** | `driver` (la tabla del modelo `Persistencies/Eloquent/Shipping/Driver`): la persona habilitada para manejar | la *asignación* de un conductor a una ruta, que sería otra tabla | `src/Entities/Shipping/Driver.php` |
+| **código del conductor** | `driver.code` — obligatorio, el identificador de negocio | la llave: la identidad de la tabla es `driver.id` | decisión D1 del [issue #3](https://github.com/Spinedac3/ddd-php/issues/3) |
 
 ## Reglas que salieron de resolver homónimos
 
