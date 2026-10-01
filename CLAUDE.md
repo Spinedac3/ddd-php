@@ -32,6 +32,21 @@ Two different things get copied, and mixing them is the classic mistake:
 
 Layout is **layer first, domain second**. Never a feature folder.
 
+## The exemplars — copy the form from these
+
+One small domain, `Shipping`, exists so every piece has a file that loads, passes the gates and
+is short enough to read whole. It is a read-by-key exemplar: no pagination, no writes.
+
+| Piece | Exemplar |
+|---|---|
+| Entity | `src/Entities/Shipping/Driver.php` |
+| Persistency | `src/Persistencies/Eloquent/Shipping/Driver.php` |
+| Contract | `src/Contracts/Repositories/Shipping/DriverRepository.php` |
+| ORM Repository | `src/Repositories/Database/ORM/Shipping/ORMDriverRepository.php` |
+| Factory | `src/Factories/Repositories/Shipping/DriverFactory.php` |
+| Service | `src/Services/Shipping/DriverService.php` |
+| Exception | `src/Exceptions/Shipping/Driver/DriverNotFoundException.php` |
+
 ## Fully-qualified names you will need
 
 Copy these verbatim. Guessing a namespace produces code that looks right and does not load.
