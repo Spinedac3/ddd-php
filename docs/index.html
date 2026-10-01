@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El flujo SDD</title>
+<meta name="description" content="El flujo SDD, en diapositivas: qué es cada pieza, de qué necesidad nace, de qué fuente viene, y cómo se revisó.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --papel:#F4F5F2; --ficha:#FDFDFB; --tinta:#20261F; --tinta2:#5A6357;
+  --linea:#D8DCD5; --sello:#2B5D8A; --sello-suave:#E3EBF3;
+  --rojo:#B3372B; --rojo-suave:#F6E7E4; --verde:#2E7D4F; --verde-suave:#E4EFE7;
+  --ambar:#8A6D1F; --ambar-suave:#F3EDDA; --mono-bg:#EDEFEA;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --papel:#141815; --ficha:#1C211D; --tinta:#E7EAE2; --tinta2:#9AA394;
+    --linea:#333B34; --sello:#7FAFD8; --sello-suave:#1D2B38;
+    --rojo:#E08578; --rojo-suave:#392420; --verde:#7CBD97; --verde-suave:#1E2F25;
+    --ambar:#D3B35F; --ambar-suave:#332C18; --mono-bg:#232A24;
+  }
+}
+:root[data-theme="dark"]{
+  --papel:#141815; --ficha:#1C211D; --tinta:#E7EAE2; --tinta2:#9AA394;
+  --linea:#333B34; --sello:#7FAFD8; --sello-suave:#1D2B38;
+  --rojo:#E08578; --rojo-suave:#392420; --verde:#7CBD97; --verde-suave:#1E2F25;
+  --ambar:#D3B35F; --ambar-suave:#332C18; --mono-bg:#232A24;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+@media (prefers-reduced-motion: reduce){*{transition:none !important;animation:none !important}}
+html,body{height:100%}
+body{
+  background:var(--papel); color:var(--tinta);
+  font-family:"Source Serif 4",Georgia,serif; font-size:16px; line-height:1.55;
+  overflow:hidden;
+}
+a{color:var(--sello)}
+strong{font-weight:700}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace}
+.eyebrow{
+  font-family:"Archivo",system-ui,sans-serif;font-stretch:87%;
+  font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--sello);
+}
+h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;line-height:1.1;text-wrap:balance;font-stretch:95%}
+h2{font-size:clamp(24px,3.6vw,36px);font-weight:800;margin:8px 0 10px}
+h3{font-size:17px;font-weight:700;margin-bottom:5px}
+p.lead{font-size:clamp(16px,2vw,19px);color:var(--tinta2);max-width:64ch}
+
+/* ═══ mecánica de diapositivas ═══ */
+.slide{
+  display:none; height:100dvh; overflow-y:auto;
+  padding:54px 0 76px;
+}
+.slide.act{display:block;animation:ap .25s ease}
+@keyframes ap{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.wrap{max-width:1120px;margin:0 auto;padding:0 34px}
+.op{display:inline-flex;align-items:center;gap:10px;margin-bottom:2px}
+.op .num{
+  font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:12.5px;
+  border:1.5px solid var(--sello);color:var(--sello);padding:2px 9px;border-radius:3px;letter-spacing:.08em;
+}
+/* barra de navegación */
+#nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:9;
+  display:flex;align-items:center;gap:14px;
+  padding:10px 22px;background:var(--papel);border-top:1px solid var(--linea);
+  font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--tinta2);
+}
+#nav .cnt{min-width:64px;font-variant-numeric:tabular-nums}
+#nav .tit{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:.04em}
+#nav button{
+  font-family:"IBM Plex Mono",monospace;font-size:15px;line-height:1;
+  background:var(--ficha);color:var(--tinta);border:1.5px solid var(--linea);border-radius:6px;
+  width:38px;height:32px;cursor:pointer;
+}
+#nav button:hover{border-color:var(--sello);color:var(--sello)}
+#nav button:focus-visible{outline:3px solid var(--sello);outline-offset:2px}
+#nav .kbd{font-size:11px;opacity:.7}
+#barra{position:fixed;top:0;left:0;height:3px;background:var(--sello);z-index:10;transition:width .2s}
+
+/* ═══ tabs ═══ */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 12px}
+.tab{
+  font-family:"Archivo",sans-serif;font-weight:700;font-size:14px;cursor:pointer;
+  background:var(--ficha);color:var(--tinta);border:1.5px solid var(--linea);border-radius:20px;
+  padding:7px 16px;transition:border-color .15s;
+}
+.tab:hover{border-color:var(--sello)}
+.tab:focus-visible{outline:3px solid var(--sello);outline-offset:2px}
+.tab[aria-pressed="true"]{border-color:var(--sello);color:var(--sello);box-shadow:inset 0 0 0 1px var(--sello)}
+.tabpanel{display:none;background:var(--ficha);border:1.5px solid var(--sello);border-radius:10px;padding:20px 24px}
+.tabpanel.act{display:block}
+.tabpanel p{font-size:16px;max-width:70ch}
+.tabpanel p+p{margin-top:9px}
+/* ═══ diagrama transformer ═══ */
+.diag{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap;margin-top:14px}
+.d-col{display:flex;flex-direction:column;gap:6px;justify-content:center}
+.d-cap{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--tinta2)}
+.d-chips{display:flex;gap:5px;flex-wrap:wrap;max-width:220px}
+.d-chips span{font-family:"IBM Plex Mono",monospace;font-size:12.5px;background:var(--mono-bg);border:1px solid var(--linea);border-radius:5px;padding:3px 8px}
+.d-arr{align-self:center;color:var(--tinta2);font-family:"IBM Plex Mono",monospace;font-size:16px}
+.d-bloque{border:1.5px solid var(--sello);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.d-bloque .d-cap{color:var(--sello)}
+.d-inner{display:flex;flex-direction:column;gap:5px}
+.d-inner div{background:var(--sello-suave);border-radius:6px;padding:5px 10px;font-family:"Archivo",sans-serif;font-size:12.5px;font-weight:700;color:var(--sello);text-align:center}
+.d-inner small{display:block;font-family:"Source Serif 4",serif;font-weight:400;font-size:11px;color:var(--tinta2)}
+.d-probs{display:flex;flex-direction:column;gap:4px;min-width:230px}
+.d-probs>div{display:grid;grid-template-columns:78px 1fr 38px;align-items:center;gap:7px;font-size:12px}
+.d-probs i{display:block;height:9px;border-radius:4px;background:var(--linea)}
+.d-probs>div:first-child i{background:var(--verde)}
+.d-probs b{font-family:"IBM Plex Mono",monospace;font-size:11.5px;font-variant-numeric:tabular-nums;color:var(--tinta2)}
+.d-loop{margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--tinta2)}
+/* ═══ portada ═══ */
+.portada{display:flex;flex-direction:column;justify-content:center}
+.portada .kicker{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--tinta2);letter-spacing:.06em;margin-bottom:16px}
+.portada h1{font-size:clamp(40px,6.5vw,78px);font-weight:900;font-stretch:80%;letter-spacing:-.01em;max-width:16ch}
+.portada h1 .acc{color:var(--sello)}
+.portada p.lead{margin-top:16px}
+.stamp{
+  margin-top:24px;display:inline-block;transform:rotate(-2deg);align-self:flex-start;
+  border:2.5px solid var(--verde);color:var(--verde);border-radius:6px;
+  font-family:"Archivo",sans-serif;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
+  font-size:13px;padding:6px 14px;
+}
+/* ═══ cards ═══ */
+.grid{display:grid;gap:12px;margin-top:18px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.card{background:var(--ficha);border:1px solid var(--linea);border-radius:8px;padding:16px 18px}
+.card .tag{
+  font-family:"IBM Plex Mono",monospace;font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--tinta2);display:block;margin-bottom:7px;
+}
+.card p{font-size:14.5px}
+.card p+p{margin-top:7px}
+.card .src{margin-top:10px;padding-top:8px;border-top:1px dashed var(--linea);font-size:12.5px;color:var(--tinta2)}
+.card .src b{color:var(--sello);font-weight:600}
+.incidente{border-left:4px solid var(--rojo)}
+.incidente .costo{color:var(--rojo);font-weight:600}
+.regla-nace{margin-top:9px;background:var(--sello-suave);border-radius:6px;padding:8px 11px;font-size:13.5px}
+.regla-nace b{color:var(--sello)}
+/* cita grande */
+.cita{display:flex;flex-direction:column;justify-content:center}
+.cita blockquote{
+  font-size:clamp(24px,3.4vw,40px);font-family:"Source Serif 4",serif;font-weight:600;
+  line-height:1.35;max-width:26ch;text-wrap:balance;
+}
+.cita blockquote .n{color:var(--rojo)}
+.cita .de{margin-top:18px;font-family:"IBM Plex Mono",monospace;font-size:13.5px;color:var(--tinta2)}
+.cita .moraleja{margin-top:26px;font-size:clamp(16px,2vw,19px);max-width:56ch;border-left:4px solid var(--ambar);padding-left:16px}
+/* ═══ mapa del flujo ═══ */
+.flujo{display:flex;flex-wrap:wrap;gap:7px;align-items:stretch;margin:20px 0 14px}
+.nodo{
+  flex:1 1 108px;min-width:106px;cursor:pointer;text-align:left;
+  background:var(--ficha);border:1.5px solid var(--linea);border-radius:8px;padding:8px 11px 7px;
+  font-family:"Archivo",sans-serif;color:var(--tinta);transition:border-color .15s, transform .15s;
+}
+.nodo:hover{border-color:var(--sello);transform:translateY(-2px)}
+.nodo:focus-visible{outline:3px solid var(--sello);outline-offset:2px}
+.nodo[aria-pressed="true"]{border-color:var(--sello);box-shadow:inset 0 0 0 1.5px var(--sello)}
+.nodo .fase{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;color:var(--tinta2);text-transform:uppercase}
+.nodo .nom{display:block;font-weight:800;font-size:14.5px;margin-top:2px}
+.fila{display:flex;align-items:stretch;gap:8px;margin-bottom:8px}
+.fila-tag{
+  writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;
+  font-family:"Archivo",sans-serif;font-weight:800;font-size:11px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--sello);border-right:2px solid var(--sello);
+  padding:4px 2px 4px 0;margin-right:4px;
+}
+.fila .nodo{flex:1 1 0;min-width:0;max-width:275px}
+
+.nodo .que{font-family:"Source Serif 4",serif;font-size:11.5px;color:var(--tinta2);margin-top:1px;line-height:1.28}
+.nodo.rojo .nom{color:var(--rojo)} .nodo.verde .nom{color:var(--verde)} .nodo.sello .nom{color:var(--sello)}
+.flecha{align-self:center;color:var(--tinta2);font-family:"IBM Plex Mono",monospace;font-size:14px;user-select:none}
+#detalle{background:var(--ficha);border:1.5px solid var(--sello);border-radius:10px;padding:16px 22px;min-height:110px}
+#detalle .dt-head{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;margin-bottom:8px}
+#detalle h3{font-size:19px;margin:0}
+#detalle .dt-cmd{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--sello);background:var(--sello-suave);padding:2px 8px;border-radius:4px}
+.dt-row{display:grid;grid-template-columns:126px 1fr;gap:5px 16px;font-size:14px;margin-top:8px}
+.dt-row .k{font-family:"Archivo",sans-serif;font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--tinta2);padding-top:2px}
+.dt-row .src b{color:var(--sello)}
+@media (max-width:560px){.dt-row{grid-template-columns:1fr;gap:2px}.dt-row .k{margin-top:7px}}
+/* ═══ terminal ═══ */
+.term{
+  background:var(--mono-bg);border:1px solid var(--linea);border-radius:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;
+  padding:13px 17px;overflow-x:auto;white-space:pre;margin-top:10px;
+}
+.term .c{color:var(--tinta2)} .term .g{color:var(--verde)} .term .r{color:var(--rojo)} .term .b{color:var(--sello)} .term .a{color:var(--ambar)}
+/* ═══ autores ═══ */
+.autor .quien{font-size:13px;color:var(--tinta2);margin-bottom:6px}
+.autor ul{list-style:none;margin-top:2px}
+.autor li{font-size:13.8px;padding:4px 0 4px 21px;position:relative}
+.autor li.toma::before{content:"✓";position:absolute;left:0;color:var(--verde);font-weight:700}
+.autor li.deja::before{content:"✕";position:absolute;left:0;color:var(--rojo);font-weight:700}
+.disenso{background:var(--ambar-suave);border:1px solid var(--ambar);border-radius:8px;padding:18px 22px;margin-top:18px}
+.disenso h3{color:var(--ambar)}
+.disenso li{font-size:15px;margin:8px 0 8px 18px}
+/* ═══ mapa de fuentes ═══ */
+.fmap{display:grid;grid-template-columns:280px 1fr;gap:18px;margin-top:16px}
+@media (max-width:760px){.fmap{grid-template-columns:1fr}}
+.flist{display:flex;flex-direction:column;gap:6px}
+.fnt{
+  text-align:left;cursor:pointer;font-family:"Archivo",sans-serif;font-weight:700;font-size:13.5px;
+  background:var(--ficha);color:var(--tinta);border:1.5px solid var(--linea);border-radius:7px;
+  padding:8px 12px;transition:border-color .15s;
+}
+.fnt small{display:block;font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:10px;color:var(--tinta2);letter-spacing:.05em;text-transform:uppercase}
+.fnt:hover{border-color:var(--sello)}
+.fnt:focus-visible{outline:3px solid var(--sello);outline-offset:2px}
+.fnt[aria-pressed="true"]{border-color:var(--sello);color:var(--sello);box-shadow:inset 0 0 0 1px var(--sello)}
+.fnt.casa[aria-pressed="true"]{border-color:var(--verde);color:var(--verde);box-shadow:inset 0 0 0 1px var(--verde)}
+.pzs{display:flex;flex-wrap:wrap;gap:7px;align-content:flex-start}
+.pz{
+  font-family:"Archivo",sans-serif;font-weight:700;font-size:13px;
+  background:var(--ficha);border:1.5px solid var(--linea);border-radius:20px;color:var(--tinta2);
+  padding:6px 14px;transition:all .15s;
+}
+.pz.on{border-color:var(--sello);color:var(--sello);background:var(--sello-suave);transform:translateY(-1px)}
+#fdet{grid-column:2;background:var(--ficha);border:1.5px solid var(--sello);border-radius:10px;padding:16px 20px;margin-top:4px;min-height:120px}
+@media (max-width:760px){#fdet{grid-column:1}}
+#fdet h3{font-size:17px;margin-bottom:6px}
+#fdet .fr{display:grid;grid-template-columns:84px 1fr;gap:4px 12px;font-size:14px}
+#fdet .fr .k{font-family:"Archivo",sans-serif;font-weight:700;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+#fdet .fr .k.t{color:var(--verde)} #fdet .fr .k.d{color:var(--rojo)}
+/* ═══ maestro-detalle del flujo ═══ */
+.mflujo{display:grid;grid-template-columns:360px 1fr;gap:18px;margin-top:16px;align-items:start}
+@media (max-width:820px){.mflujo{grid-template-columns:1fr}}
+.mgrp{margin-bottom:10px}
+.mgrp>span{
+  display:block;font-family:"Archivo",sans-serif;font-weight:800;font-size:11px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--sello);margin-bottom:4px;
+}
+.mit{
+  display:flex;align-items:center;gap:10px;width:100%;text-align:left;cursor:pointer;
+  background:var(--ficha);border:1.5px solid var(--linea);border-radius:7px;
+  padding:7px 11px;margin-bottom:5px;transition:border-color .12s;
+}
+.mit:hover{border-color:var(--sello)}
+.mit:focus-visible{outline:3px solid var(--sello);outline-offset:2px}
+.mit[aria-pressed="true"]{border-color:var(--sello);box-shadow:inset 0 0 0 1.5px var(--sello)}
+.mit .n{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:600;color:var(--tinta2);
+  min-width:20px;text-align:right;
+}
+.mit .nm{font-family:"Archivo",sans-serif;font-weight:800;font-size:14px;white-space:nowrap}
+.mit .cq{font-size:12px;color:var(--tinta2);line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mit.rojo .nm{color:var(--rojo)} .mit.verde .nm{color:var(--verde)} .mit.sello .nm{color:var(--sello)}
+/* ═══ mock github ═══ */
+.gl{border:1px solid var(--linea);border-radius:9px;background:var(--ficha);overflow:hidden;font-size:13px}
+.gl-head{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:1px solid var(--linea);font-family:"Archivo",sans-serif;font-weight:700;font-size:13.5px;flex-wrap:wrap}
+.gl-chip{font-family:"IBM Plex Mono",monospace;font-size:10.5px;padding:2px 9px;border-radius:12px;font-weight:600}
+.gl-open{background:var(--verde-suave);color:var(--verde)}
+.gl-mr{background:var(--sello-suave);color:var(--sello)}
+.gl-ref{font-family:"IBM Plex Mono",monospace;color:var(--tinta2);font-weight:400;font-size:11.5px}
+.gl-body{padding:11px 14px;display:flex;flex-direction:column;gap:7px}
+.gl-row{display:flex;gap:9px;align-items:baseline;font-size:12.8px;line-height:1.4}
+.gl-sec{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--sello);background:var(--sello-suave);padding:1px 8px;border-radius:4px;white-space:nowrap}
+.gl-cap{font-size:12.5px;color:var(--tinta2);margin-top:7px;font-style:italic}
+/* ═══ ejemplos github en el detalle ═══ */
+.glx{margin-top:12px;padding-top:10px;border-top:1px dashed var(--linea)}
+.glx .glx-cap{font-family:"Archivo",sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta2);display:block;margin-bottom:6px}
+.gl.mini .gl-head{padding:7px 11px;font-size:12.5px}
+.gl.mini .gl-body{padding:8px 11px;gap:5px}
+.gl.mini .gl-row{font-size:12px}
+.gl-file{display:flex;gap:8px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:12px;background:var(--mono-bg);border:1px solid var(--linea);border-radius:6px;padding:7px 11px}
+.gl-file small{color:var(--tinta2);font-family:"Source Serif 4",serif;font-size:11.5px}
+.gl-commit{display:flex;gap:8px;align-items:baseline;font-size:12.5px;padding:5px 11px;border:1px solid var(--linea);border-radius:6px;background:var(--ficha)}
+.gl-commit+.gl-commit{margin-top:4px}
+.gl-commit .sha{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--tinta2)}
+.gl-commit .msg{font-family:"IBM Plex Mono",monospace;font-size:12px}
+.pipe{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pipe .job{display:inline-flex;gap:6px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:11.5px;border:1px solid var(--linea);border-radius:16px;padding:4px 11px;background:var(--ficha)}
+.pipe .job i{width:13px;height:13px;border-radius:50%;display:inline-block;background:var(--verde);color:#fff;font-style:normal;font-size:9px;line-height:13px;text-align:center;font-weight:700}
+.pipe .job.rj i{background:var(--rojo)}
+/* ═══ ciclo TDD ═══ */
+.ciclo{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 12px}
+.ciclo .paso{flex:1 1 150px;border-radius:8px;padding:9px 12px;border:1.5px solid var(--linea);background:var(--ficha)}
+.ciclo .paso b{font-family:"Archivo",sans-serif;font-size:13.5px;display:block}
+.ciclo .paso span{font-size:12px;color:var(--tinta2);line-height:1.3;display:block;margin-top:2px}
+.ciclo .p-rojo{border-color:var(--rojo)} .ciclo .p-rojo b{color:var(--rojo)}
+.ciclo .p-verde{border-color:var(--verde)} .ciclo .p-verde b{color:var(--verde)}
+.ciclo .p-tri{border-color:var(--ambar)} .ciclo .p-tri b{color:var(--ambar)}
+/* ═══ tabla ═══ */
+.twrap{overflow-x:auto;border:1px solid var(--linea);border-radius:8px;margin-top:14px}
+table{border-collapse:collapse;width:100%;background:var(--ficha);font-size:13.5px}
+th{font-family:"Archivo",sans-serif;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta2);text-align:left}
+th,td{padding:9px 13px;border-bottom:1px solid var(--linea);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ok{color:var(--verde);font-weight:600} .mal{color:var(--rojo);font-weight:600}
+.compacta th,.compacta td{padding:6px 10px}
+/* reglas bolsillo */
+.reglas li{list-style:none;padding:10px 0;font-size:clamp(15px,1.9vw,18px);border-bottom:1px dashed var(--linea)}
+.reglas li:last-child{border-bottom:none}
+/* cierre */
+.stamp2{
+  display:inline-block;transform:rotate(-1.5deg);border:3px double var(--sello);color:var(--sello);
+  font-family:"Archivo",sans-serif;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+  padding:10px 20px;border-radius:8px;font-size:14px;margin-top:22px;
+}
+</style>
+</head>
+<body>
+<div id="barra"></div>
+
+<!-- ── 1 · PORTADA ─────────────────────────────── -->
+<section class="slide portada" data-t="Portada">
+  <div class="wrap">
+    <div class="kicker">Samuel Pineda · flujo SDD v1</div>
+    <h1>El flujo <span class="acc">SDD</span></h1>
+    <p class="lead">Cómo desarrollar con agentes: la spec se aprueba antes de codear, los tests
+    se escriben antes que el código, y cada PR trae la evidencia de lo que se corrió.</p>
+    <p class="lead" style="font-size:15px;margin-top:10px">Qué es cada cosa · de dónde
+    sale · cómo se probó · cómo se usa.</p>
+    <div class="stamp">Nada se aprueba por relato — se mide</div>
+  </div>
+</section>
+
+<!-- ── 1b · QUÉ ES UN LLM ──────────────────────── -->
+<section class="slide" data-t="OP 010 · Qué es un LLM">
+  <div class="wrap">
+    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 1 de 3</span></div>
+    <h2>Qué es un LLM — el paper de 2017</h2>
+    <p class="lead"><em>«Attention Is All You Need»</em> (Google, 2017) es la arquitectura de todos los
+    LLM actuales: el <strong>Transformer</strong>. Nació para traducir; terminó leyéndose internet.
+    Vamos por partes:</p>
+    <div class="tabs" role="tablist" aria-label="Conceptos del LLM">
+      <button class="tab" data-tab="token">¿Qué es un token?</button>
+      <button class="tab" data-tab="atencion">La atención</button>
+      <button class="tab" data-tab="transformer">¿Qué es un Transformer?</button>
+      <button class="tab" data-tab="gano">Por qué ganó</button>
+    </div>
+    <div class="tabpanel" data-panel="token">
+      <p><strong>La unidad con la que el modelo lee y escribe.</strong> No ve letras ni palabras: ve
+      <em>tokens</em> — pedazos de texto de unos ¾ de palabra («desarrollador» pueden ser dos o tres),
+      convertidos en números.</p>
+      <p>El contexto, el costo de cada consulta y la salida del modelo se miden en tokens.</p>
+    </div>
+    <div class="tabpanel" data-panel="transformer">
+      <p><strong>Una red neuronal que convierte una secuencia de tokens en la predicción del
+      siguiente.</strong> Los tokens entran como vectores de números, atraviesan decenas de bloques
+      idénticos — cada uno aplica la atención del tab anterior más una red pequeña — y a la salida hay
+      una probabilidad para cada token posible: se elige uno y se repite. No tiene memoria: <strong>re-lee el contexto completo para cada token
+      que produce</strong>. Todos los LLM de hoy — GPT, Claude, Gemini — son variantes de este diseño.</p>
+      <div class="diag" aria-label="Diagrama: tokens entran, N bloques de atención y red, sale la probabilidad del siguiente token">
+        <div class="d-col">
+          <span class="d-cap">contexto (tokens)</span>
+          <div class="d-chips"><span>El</span><span>cliente</span><span>pidió</span><span>un</span><span class="mono">___</span></div>
+        </div>
+        <span class="d-arr">→</span>
+        <div class="d-bloque">
+          <span class="d-cap">× 30–100 bloques iguales</span>
+          <div class="d-inner">
+            <div>atención<small>cada token mira a todos los demás</small></div>
+            <div>red pequeña<small>transforma el resultado</small></div>
+          </div>
+        </div>
+        <span class="d-arr">→</span>
+        <div class="d-col">
+          <span class="d-cap">probabilidad del siguiente token</span>
+          <div class="d-probs">
+            <div><span class="mono">reembolso</span><i style="width:58%"></i><b>58%</b></div>
+            <div><span class="mono">descuento</span><i style="width:21%"></i><b>21%</b></div>
+            <div><span class="mono">cambio</span><i style="width:6%"></i><b>6%</b></div>
+            <div><span class="mono">…</span><i style="width:15%"></i><b>15%</b></div>
+          </div>
+        </div>
+      </div>
+      <div class="d-loop">↻ el token elegido se agrega al contexto — y todo vuelve a correr para el siguiente</div>
+    </div>
+    <div class="tabpanel" data-panel="atencion">
+      <p><strong>Una búsqueda blanda en un diccionario.</strong> Para producir cada token, el modelo deja
+      que cada palabra le «pregunte» a todas las demás cuánto importan (Q pregunta, K indexa, V aporta el
+      contenido), y combina las respuestas con pesos que <strong>suman exactamente 1</strong>.</p>
+      <p>Ese «suman 1» importa: la atención es un <strong>presupuesto fijo</strong>. Todo lo que entra al
+      contexto compite por él — cada cosa de más le cobra atención a la tarea. Vamos a volver a esto
+      cuando hablemos de qué se le pasa al agente y qué no.</p>
+    </div>
+    <div class="tabpanel" data-panel="gano">
+      <p><strong>Porque fue la primera arquitectura que se pudo entrenar a lo grande.</strong>
+      Los modelos anteriores leían en orden: para procesar la palabra 10 había que terminar la 9 —
+      imposible de repartir entre miles de GPUs. El Transformer mira todo el contexto a la vez,
+      así que el entrenamiento se reparte completo.</p>
+      <div class="diag" aria-label="Antes: secuencial. Después: paralelo.">
+        <div class="d-col">
+          <span class="d-cap">antes (RNN) — en orden</span>
+          <div class="d-chips"><span>t1</span><span class="mono">→</span><span>t2</span><span class="mono">→</span><span>t3</span><span class="mono">→</span><span>…</span></div>
+        </div>
+        <div class="d-col">
+          <span class="d-cap">Transformer — todo a la vez</span>
+          <div class="d-chips"><span>t1</span><span>t2</span><span>t3</span><span>t4</span><span>t5</span><span>…</span></div>
+        </div>
+      </div>
+      <p style="margin-top:12px">Misma receta, más máquinas, más texto → mejor modelo. Esa escalera es la
+      que llevó de un traductor de 2017 a los LLM de hoy: <strong>no ganó por ser más listo con poco —
+      ganó por ser el único que podía comerse internet.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 2 · CONCEPTOS ───────────────────────────── -->
+<section class="slide" data-t="OP 010 · Conceptos" style="padding-top:36px">
+  <div class="wrap">
+    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 2 de 3</span></div>
+    <h2>Ocho palabras que vamos a usar todo el día</h2>
+    <div class="grid g2" style="gap:8px;margin-top:10px">
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 1</span>
+        <h3>Harness (arnés)</h3>
+        <p style="font-size:13px">Todo lo que rodea al agente para convertir <strong>autonomía cruda en
+        trabajo dirigido</strong>: comandos, gates, plantillas, verificadores. El modelo es el motor;
+        el harness es el chasis, los frenos y el tablero. En el equipo le decimos
+        <strong>el kit</strong> (<span class="mono">tools/harness</span>).</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 2</span>
+        <h3>SDD — Spec-Driven Development</h3>
+        <p style="font-size:13px"><strong>La spec manda; el chat es desechable.</strong> Antes de una
+        línea de código, el pedido se convierte en una especificación revisada por un humano. Lo que el
+        agente rellene solo se marca <span class="mono">DECISIÓN</span> para que lo veas.</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 3</span>
+        <h3>RDD — Receipt-Driven Development</h3>
+        <p style="font-size:13px">La revisión no es una opinión: es un <strong>recibo atado a una
+        huella</strong> — el sha de la spec, qué tests se vieron fallar y pasar, qué gates corrieron.
+        Si cambia un byte, el recibo se invalida. Su artefacto es el recibo (abajo).</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 4</span>
+        <h3>Gate (compuerta automática)</h3>
+        <p style="font-size:13px">Un verificador que <strong>corre solo</strong>: ¿la clase carga?
+        ¿quién importa a quién? ¿la columna existe en la base real? Regla de la casa: un check que
+        devuelve cero <strong>no vale hasta verlo devolver uno</strong>.</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 5</span>
+        <h3>Spec (de 7 ejes)</h3>
+        <p style="font-size:13px">El artefacto central: un formulario <strong>fijo</strong> de 8 preguntas
+        — esquema, alcance, servicio dueño, contrato, retorno, tests, criterios — que sale de la
+        entrevista. Vive en el issue de GitHub y <strong>se congela con un sha</strong> al arrancar los
+        tests: desde ahí, cambiarla se declara, no se esconde.</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 6</span>
+        <h3>Recibo</h3>
+        <p style="font-size:13px">La pieza RDD del flujo: el documento que <span class="mono">/implementar</span>
+        (el comando que corre toda la construcción) deja al cerrar. Lo emite el instrumento
+        (<span class="mono">recibo.sh</span>), no la narración del agente, y sale con un estado:
+        <b class="ok">APROBABLE</b> · <b style="color:var(--ambar)">DEGRADADO</b> · INCONCLUSO ·
+        <b class="mal">FALLANDO</b>. Viaja dentro del PR: es lo primero que lee el revisor.</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 7</span>
+        <h3>Mutante</h3>
+        <p style="font-size:13px">Un defecto <strong>sembrado a propósito</strong> en el código para ver
+        si los tests lo matan — el juez de los tests: si sobrevive con todo en verde, la suite no vigila
+        nada. Así se juzga también al propio kit: casos conocidos-malos contra cada gate.</p>
+      </div>
+      <div class="card" style="padding:9px 14px">
+        <span class="tag">Concepto 8</span>
+        <h3>Seam (costura)</h3>
+        <p style="font-size:13px">El punto <strong>único y decisorio</strong> donde el feature toca la
+        realidad y se valida por fuera: el endpoint que responde, la query contra la base viva. En la
+        entrevista se fija con una sola pregunta — «¿cómo validamos que funciona?» — y exige un
+        <strong>valor que solo el referente correcto produce</strong>, no que "algo aparezca".</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── C2 · TDD (concepto) ─────────────────────── -->
+<section class="slide" data-t="OP 010 · TDD">
+  <div class="wrap">
+    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 3 de 3</span></div>
+    <h2>TDD: el test existe antes que el código</h2>
+    <p class="lead" style="font-size:15.5px"><strong>Test-Driven Development</strong>: la prueba se
+    escribe ANTES que el código, y dos corridas marcan el ritmo — <b style="color:var(--rojo)">ROJO</b>
+    (todos los tests nuevos fallan: el código no existe, y verlos fallar prueba que los tests prueban
+    algo) y <b style="color:var(--verde)">VERDE</b> (pasan todos + los 5 gates).</p>
+    <div class="ciclo">
+      <div class="paso p-rojo"><b>1 · ROJO</b><span>escribís el test desde la spec, corre, y FALLA — el código aún no existe</span></div>
+      <div class="paso p-verde"><b>2 · VERDE</b><span>escribís el código mínimo que lo hace pasar + corren los 5 gates</span></div>
+      <div class="paso p-tri"><b>3 · TRIANGULAR</b><span>buscás a propósito UN caso que rompa lo construido</span></div>
+      <div class="paso"><b>4 · REFACTOR</b><span>ordenás con la red puesta: los tests te avisan si rompés algo</span></div>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
+      <div>
+<div class="term"><span class="c">// el test nace de la spec — assert de VALOR exacto</span>
+public function testHydratesCarrierId(): void
+{
+    $shipment = new Shipment(['carrier_id' => 41]);
+    $this->assertSame(41, $shipment->getCarrierId());
+}</div>
+<div class="term" style="margin-top:8px"><span class="c">$ recibo.sh rojo 12 …</span>
+<span class="r">FAILURES! Tests: 6, Failures: 6.</span>
+<span class="r">Error: Call to undefined method getCarrierId()</span>
+<span class="g">rojo [ddd-php]: 6 tests, 6 vistos fallar ✓</span></div>
+      </div>
+      <div>
+<div class="term"><span class="c">$ recibo.sh verde 12 …   (tras implementar)</span>
+<span class="g">OK (6 tests, 14 assertions)</span>
+gates: loads <span class="g">✓</span> layers <span class="g">✓</span> schema <span class="g">✓</span> phpcs <span class="g">✓</span> spec <span class="g">✓</span>
+<span class="c">schema corre contra el esquema REAL de la base</span></div>
+        <p style="font-size:13.5px;margin-top:10px"><b>¿Por qué rojo primero?</b> Un test que nace en
+        verde puede estar verificando al mock — es el anti-caso del 100% de cobertura con 4% de verdad.</p>
+        <p style="font-size:13.5px;margin-top:8px"><b>¿Y si un test nuevo nace en verde igual?</b> El
+        recibo lo ficha en <span class="mono">nunca_rojos</span> y el estado sale
+        <b style="color:var(--ambar)">DEGRADADO</b>: no es un rojo — es «aprobable solo si la causa que
+        el recibo anota te convence». El rojo no es trámite: <strong>es la prueba de vida del
+        test</strong>, y saltárselo queda escrito, no escondido.</p>
+        <p style="font-size:13.5px;margin-top:8px"><b>Triangular:</b> los tests de la spec interrogan lo
+        prometido; con el verde en la mano buscás el null que tu getter no espera, el borde de tu if.
+        Rojo → defecto real, vuelve al loop.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── F2 · LA EVIDENCIA ──────────────────────── -->
+<section class="slide" data-t="OP 020 · La evidencia" style="padding-top:38px">
+  <div class="wrap">
+    <div class="op"><span class="num">OP 020</span><span class="eyebrow">La evidencia</span></div>
+    <h2>Medido, no opinado</h2>
+    <p class="lead" style="font-size:14px;max-width:none">Un concepto de la base de conocimiento → una medición propia → una decisión:</p>
+    <div class="card" style="margin-top:8px;padding:10px 20px">
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <p style="font-size:14px"><b>1 ·</b> La base decía que la cobertura no prueba nada: hay que
+        <b>sembrar defectos a propósito en el código</b> (eso es un «mutante») y ver si los tests los
+        matan. Lo hicimos contra una suite generada por IA con 100% de cobertura — <b class="mal">solo
+        murió el 4%</b>. Hoy eso vive implementado como: <b>rojo primero y asserts de valores exactos</b> en cada
+        issue, y mutantes permanentes contra el propio kit — las suites <span class="mono">mutantes*.sh</span>
+        le siembran casos malos a los gates (el 0/11 del punto 2). <span style="color:var(--tinta2)">Próximo:
+        mutar los tests de cada PR (deuda declarada — medida, aún sin implementar).</span></p>
+        <p style="font-size:14px"><b>2 ·</b> Decía también que un verificador no vale hasta
+        <b>verlo fallar</b>. Les dimos casos malos a nuestros propios gates: <b class="mal">9 de 11</b>
+        violaciones pasaban el CI en verde. Por eso hoy cada gate se prueba con un caso malo antes de
+        confiarle nada — y <b class="ok">0 de 11 escapan</b>.</p>
+        <p style="font-size:14px"><b>3 ·</b> Decía que una medición vale si se define QUÉ medir
+        <b>antes</b> de correrla, y a ciegas. Re-corrimos el issue del piloto sin darle las respuestas:
+        <b class="ok">2 errores cazados</b>, <b class="mal">2 repetidos</b> — y con los repetidos se
+        corrigió el estándar.</p>
+        <p style="font-size:14px"><b>4 ·</b> Y decía que al prompt no se le puede confiar la obediencia.
+        Escribimos una regla textual en el prompt de agentes: <b class="mal">2 de 3 la citaron y la
+        violaron igual</b>. Por eso la verificación corre afuera del modelo: gates, spec-check, recibo.</p>
+      </div>
+    </div>
+    <div class="card" style="margin-top:8px;padding:10px 14px">
+      <span class="tag">Benchmark de implementadores · concepto: «la sensación no es evidencia» (METR) — 8 celdas, mismo issue, misma spec congelada, con recibo</span>
+      <div class="twrap" style="margin-top:6px">
+        <table style="font-size:12px" class="compacta">
+          <tr><th style="white-space:nowrap">Modelo (×2 c/u)</th><th>Recibo</th><th style="white-space:nowrap">Tests · rojos</th><th>Tiempo</th><th>Costo</th><th>Lo notable</th></tr>
+          <tr><td><b>opus</b></td><td><span class="ok">APROBABLE ×2</span></td><td style="white-space:nowrap">57/57·12 y 58/58·13</td><td>24.5–26.6 min</td><td>$14.5–16.5</td><td>cazó una colisión de columnas que la spec no vio</td></tr>
+          <tr><td><b>codex</b> (gpt-5.6)</td><td><span class="ok">APROBABLE ×2</span></td><td style="white-space:nowrap">55/55 ×2 · 8</td><td>~45–50 min</td><td>~245k tok ChatGPT · <b>$0 Anthropic</b></td><td>misma calidad semántica que opus; también cazó la colisión</td></tr>
+          <tr><td><b>sonnet</b></td><td><span class="mal">DNF</span> (no terminó) / <span class="ok">APROBABLE</span></td><td style="white-space:nowrap">58/58 · 18</td><td>28.2 / 37.7 min (la más lenta)</td><td>$7.1 / $9.4</td><td>calidad ok cuando termina; 1 de 2 no terminó (murió esperando un phpunit)</td></tr>
+          <tr><td><b>haiku</b></td><td><span class="mal">FALLANDO ×2</span></td><td style="white-space:nowrap">55/55 y 56/57 · <b class="mal">0</b></td><td>8.3–8.8 min</td><td>$1.2</td><td><b>narró el verde</b> con bug de datos silencioso — el recibo la desmintió</td></tr>
+        </table>
+      </div>
+      <p style="font-size:12.5px;color:var(--tinta2);margin-top:6px">Cronómetro Orca vs nativos (3 reps por lado): indistinguibles → la herramienta se elige por capacidades.
+      <b style="color:var(--tinta)">Decisión:</b> grill y orquestación en opus · implementación: codex u opus · sonnet no entra como implementador · haiku no para este calibre. Límites declarados: n=2 por modelo, un issue, una máquina.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── 5 · EL MAPA ─────────────────────────────── -->
+<section class="slide" data-t="OP 030 · El flujo, de una mirada">
+  <div class="wrap">
+    <div class="op"><span class="num">OP 030</span><span class="eyebrow">El flujo</span></div>
+    <h2>El flujo, de una mirada</h2>
+    <p class="lead">Diez piezas, tres etapas. Tocá una — el detalle aparece al lado.</p>
+    <div class="mflujo">
+      <div role="tablist" aria-label="Piezas del flujo">
+        <div class="mgrp"><span>Etapa 1 · decidir</span>
+          <button class="mit" data-k="premisa"><span class="n">1</span><span class="nm">Premisa</span><span class="cq">el pedido, tal cual llega</span></button>
+          <button class="mit sello" data-k="grill"><span class="n">2</span><span class="nm">/grill</span><span class="cq">rondas ancladas en código</span></button>
+          <button class="mit" data-k="spec"><span class="n">3</span><span class="nm">Spec 7 ejes</span><span class="cq">la conversación, escrita</span></button>
+          <button class="mit" data-k="issue"><span class="n">4</span><span class="nm">Issue</span><span class="cq">la spec canónica, en GitHub</span></button>
+        </div>
+        <div class="mgrp"><span>Etapa 2 · construir — la corre /implementar</span>
+          <button class="mit rojo" data-k="rojo"><span class="n">5</span><span class="nm">Fase roja</span><span class="cq">los tests se ven fallar</span></button>
+          <button class="mit" data-k="codigo"><span class="n">6</span><span class="nm">Código</span><span class="cq">guiado por la spec congelada</span></button>
+          <button class="mit verde" data-k="verde"><span class="n">7</span><span class="nm">Verde + gates</span><span class="cq">tests · esquema · capas · forma</span></button>
+          <button class="mit" data-k="triangular"><span class="n">8</span><span class="nm">Triangular</span><span class="cq">interrogar lo construido</span></button>
+        </div>
+        <div class="mgrp"><span>Etapa 3 · entregar</span>
+          <button class="mit verde" data-k="recibo"><span class="n">9</span><span class="nm">Recibo</span><span class="cq">la huella que habilita el cierre</span></button>
+          <button class="mit sello" data-k="mr"><span class="n">10</span><span class="nm">/pr</span><span class="cq">el PR con el recibo adentro</span></button>
+        </div>
+      </div>
+      <div id="detalle" aria-live="polite"></div>
+    </div>
+    <p style="margin-top:12px;font-size:13.5px;color:var(--tinta2)">El flujo no está cerrado: lo que cada issue
+    real le encuentre <b>vuelve por la misma puerta</b> — se anota, se mide y se corrige. Las reglas se
+    ganaron su lugar con defectos evitados; la que no pueda mostrar el suyo, se borra.</p>
+
+  </div>
+</section>
+
+
+
+<div id="nav">
+  <button id="prev" aria-label="Anterior">‹</button>
+  <button id="next" aria-label="Siguiente">›</button>
+  <span class="cnt" id="cnt">1 / 14</span>
+  <span class="tit" id="tit"></span>
+  <span class="kbd">← → · espacio</span>
+</div>
+
+<script>
+/* ── detalle del mapa ── */
+const D = {
+  premisa:{t:"Premisa",c:null,que:"El pedido tal cual llega: una frase, un párrafo o la imagen de la solicitud. Se lee COMPLETA antes de abrir un solo archivo.",nace:"En el piloto, el grill arrancó a explorar en el repo equivocado por no leer primero la imagen del pedido. Primero el pedido entero; después el código.",dev:"La escribís vos (o la pegás del solicitante). Bug obvio de <2 archivos: se salta el grill y va directo a rojo→verde con recibo.",usa:"— texto o imagen del solicitante",src:"<b>Harper Reed</b> — el plan antes que el código."},
+  grill:{t:"La entrevista",c:"/grill",que:"Convierte la premisa en decisiones conversando. Explora la cadena entera, corre queries reales contra las bases dev, y pregunta en RONDAS: lo que ya no depende de nada abierto, junto, con la recomendada y su evidencia. Termina cuando la frontera queda vacía — nada asumido en silencio.",nace:"El error mayor del piloto se eligió por el NOMBRE de una clase. De ahí las tres anclas que todo referente debe traer: query viva contra la base, consumidor actual en el código, y homónimos descartados. Y los hechos los busca el agente: en el piloto te preguntaban cosas que un SELECT contestaba.",dev:"Contestás las rondas. Corregir la recomendada es tu trabajo y queda medido en la bitácora. Lo que es «cómo se ve» no se conversa: mockup o pantalla real.",usa:"/grill (.claude/commands/grill.md) · subagentes de hechos en opus · docs/glosario.md",src:"<b>Matt Pocock</b> (rondas de frontera, glosario activo, seams) + las tres anclas, regla propia medida."},
+  spec:{t:"Spec de 7 ejes",c:null,que:"La conversación colapsada a un formulario FIJO de ocho preguntas — el eje 0 y los 7 ejes (abajo están los ocho, uno por uno). Cada fila es obligatoria: «no aplica» se escribe con motivo, jamás se omite. Más el mapa de decisiones — las DURADERAS son las que sobreviven al issue: los futuros las heredan — y la compuerta: la tanda final de decisiones, cada una con su recomendada, que aprobás o corregís antes de congelar (y la bitácora cuenta cuál de las dos hiciste)",nace:"La spec del piloto congeló con pendientes vivos — y ambas zonas fallaron. Ahora spec-check verifica la FORMA a máquina y una spec con pendientes no congela.",dev:"La mirás UNA vez (ya la viviste). Todo hueco que el agente rellenó solo viene marcado DECISIÓN.",usa:"docs/plantilla-7ejes.md · tools/harness/spec-check.sh",src:"<b>Pocock</b> (colapsar sin re-entrevistar) + plantilla propia nacida de los 8 defectos del piloto."},
+  issue:{t:"El issue — hogar canónico",c:null,que:"La spec completa vive en el cuerpo del issue de GitHub. UN hogar, N ejecutores: los issues de otros repos citan al hogar, jamás copian la spec. Se publica solo con tu OK.",nace:"Dos copias divergieron en el piloto (12 secciones locales, 10 publicadas) y una propuesta se implementó como hecho. spec-check ahora compara las secciones de los dos lados.",dev:"Das el OK de publicación. Issue abierto se edita con causa escrita; entregado en tag es inmutable — el cambio nace en issue nuevo que hereda las DURADERAS.",usa:"gh o MCP de GitHub (crea el issue) · tools/harness/spec-dump.sh (baja el dump)",src:"<b>Pocock</b> (el tracker como hogar) + el dump congelado propio (git como capa durable)."},
+  rojo:{t:"Fase roja",c:"recibo.sh rojo",que:"Los tests del eje 6 se escriben DESDE la spec y se ven FALLAR — todos. El texto del issue se congela acá (sha256): eso es lo que el recibo certifica.",nace:"El anti-caso medido: 100% cobertura, 4% de verdad. Un test que no se vio fallar no prueba nada.",dev:"Nada — el agente los escribe y los corre. Pero un test nuevo que nació en verde DEGRADA el recibo, y lo ves en el PR.",usa:"tools/harness/recibo.sh rojo · phpunit",src:"TDD clásico + mutation testing + <b>Buscaglia</b> (evidencia antes que relato)."},
+  codigo:{t:"Implementación",c:null,que:"El agente del repo implementa guiado por los ejes 1–5, respetando el «NO se toca» al pie de la letra. Recibe el dump congelado — nada resumido: resumir es re-narrar, y el sha deja de certificar lo que se leyó.",nace:"Medido: una regla escrita en el prompt del agente se cita y se viola igual — la imitación le gana a la prohibición. Lo que importa lo cazan los GATES.",dev:"El DDL solo se propone: lo aplicás vos, con OK, contra dev. Un homónimo nuevo del dominio → fila al glosario en ese PR.",usa:"el agente backend del repo (.claude/agents/) — despachado por /implementar",src:"Doctrina propia — ejemplares medidos contra el árbol."},
+  verde:{t:"Verde + los 5 gates",c:"recibo.sh verde",que:"Corren los tests de la spec y los cinco gates: loads (la clase carga), layers (quién importa a quién), schema (contra el esquema REAL, en vivo), phpcs (el estilo del pipeline) y spec (la forma sigue completa).",nace:"9 de 11 violaciones de arquitectura pasaban el CI en verde antes de los gates. Y el de esquema nació de la propiedad fantasma: el piloto declaró una propiedad cuya columna no existía en la base — y todo quedó verde.",dev:"Nada — corren solos. Si algo no PUDO correr: INCONCLUSO — ni verde ni rojo, se repite. Un «no pude medir» jamás se disfraza de verde.",usa:"recibo.sh verde · tools/architecture/{loads,layers,schema,phpcs}.sh · spec-check.sh",src:"Suite de mutantes propia + <b>Buscaglia</b> (pass / inconcluso / fail)."},
+  triangular:{t:"Triangular",c:null,que:"Con el verde en la mano: UN caso buscado a propósito contra lo CONSTRUIDO — el if que se eligió, el null que el getter no espera. Los tests de la spec interrogan lo prometido; éste, lo que de verdad se escribió.",nace:"El piloto salió verde con 6/6 tests de la spec y el defecto real adentro: todos miraban la promesa, ninguno la construcción.",dev:"Si sale rojo, es defecto real y vuelve al loop. Si sale verde, queda documentando el borde.",usa:"/implementar paso 8b — el caso entra al mismo loop de recibo.sh",src:"<b>Buscaglia</b> — su loop es rojo → verde → triangular → refactor."},
+  recibo:{t:"El recibo",c:"recibo.json",que:"El documento que viaja en el PR: sha de la spec, tests vistos fallar y pasar, gates, estado (APROBABLE / DEGRADADO / INCONCLUSO / FALLANDO), tu checklist manual, y la lista honesta de lo que este recibo NO mira.",nace:"«Revisé y está bien» es una opinión. El recibo es evidencia atada a una huella: cambia un byte y se invalida. Y registra el rojo — un instrumento que solo registra éxitos siempre reporta éxito.",dev:"Lo leés en el PR. DEGRADADO = las notas dicen por qué y decidís. Tu recorrido manual queda con tus palabras — jamás contado como automático.",usa:"docs/specs/<iid>/recibo.json — commiteado en el repo dueño",src:"<b>Buscaglia (RDD)</b> — la pieza que nadie más del campo tenía: la verificación como artefacto vinculante."},
+  mr:{t:"El PR",c:"/pr",que:"Se arma desde el diff real: cambios por capa, decisiones clave, el bloque del recibo, y Closes solo en el repo dueño del issue. Nada se pushea sin tu OK explícito.",nace:"En el piloto un PR se declaró listo sin el chequeo de estilo del pipeline — y el pipeline salió rojo. Ahora el recibo corre los mismos checks que el CI.",dev:"Das el OK de push. El reviewer arranca por el recibo: estado, notas, y el no_revisado — lo que le toca mirar a él.",usa:"/pr (.claude/commands/pr.md) · gh o MCP de GitHub",src:"Convención propia + <b>Buscaglia</b> (el recibo habilita la entrega)."}
+};
+const GL = {
+  premisa:'<span class="glx-cap">Todavía no vive en GitHub</span><div class="gl-file">✉️ solicitud del cliente<small>— frase, párrafo o imagen del pedido</small></div>',
+  grill:'<span class="glx-cap">Lo que deja en el repo</span><div class="gl-file">📄 docs/specs/12/grill.json<small>— la bitácora: recomendadas vs corregidas</small></div><div class="gl-file" style="margin-top:4px">📄 docs/glosario.md<small>— +1 fila por homónimo resuelto</small></div>',
+  spec:'<span class="glx-cap">Los 8 ejes, uno por uno</span><div class="gl mini"><div class="gl-body"><div class="gl-row"><span class="gl-sec">Eje 0</span><span><b>Mapa de impacto</b> — qué repos de la cadena se tocan y cuáles NO, con motivo</span></div><div class="gl-row"><span class="gl-sec">Eje 1</span><span><b>Esquema</b> — tablas y columnas, migración, backfill (cada referente con sus 3 anclas)</span></div><div class="gl-row"><span class="gl-sec">Eje 2</span><span><b>Alcance</b> — qué entra y la lista explícita de lo que NO se toca</span></div><div class="gl-row"><span class="gl-sec">Eje 3</span><span><b>Servicio dueño</b> — dónde vive la lógica, transacción, cómo se rechaza (clase y código exactos)</span></div><div class="gl-row"><span class="gl-sec">Eje 4</span><span><b>Contrato</b> — interfaz nueva o reuso, aridad de clave, behaviors</span></div><div class="gl-row"><span class="gl-sec">Eje 5</span><span><b>Retorno</b> — el tipo exacto que devuelve (entity, colección, aggregate…)</span></div><div class="gl-row"><span class="gl-sec">Eje 6</span><span><b>Tests</b> — el seam decisorio + cada test con el VALOR exacto que asserta</span></div><div class="gl-row"><span class="gl-sec">Eje 7</span><span><b>Criterios de aceptación</b> — CUANDO… ENTONCES…, cada uno apuntando a su test</span></div></div></div>',
+  issue:'<span class="glx-cap">Así se ve en GitHub</span><div class="gl mini"><div class="gl-head"><span class="gl-chip gl-open">● Abierto</span> Asignar transportista al envío <span class="gl-ref">ddd-php#12</span></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Eje 0</span><span>mapa de impacto — qué se toca y los «no se toca»</span></div><div class="gl-row"><span class="gl-sec">Eje 6</span><span>seam: curl ⇒ carrier 41 «EXPRESS»</span></div><div class="gl-row"><span class="gl-sec">Decisiones</span><span><b>Duraderas: D1 · D2 · D8</b></span></div></div></div>',
+  rojo:'<span class="glx-cap">El commit que deja</span><div class="gl-commit"><span class="sha">a1f09e2</span><span class="msg">✅ test(shipping): tests del eje 6 — vistos fallar</span></div><div class="gl-file" style="margin-top:4px">📄 recibo: "fase_rojo": { "tests_vistos_fallar": 6 }<small></small></div>',
+  codigo:'<span class="glx-cap">Los commits, en su rama</span><div class="gl-commit"><span class="sha">b7c2d10</span><span class="msg">✨ feat(shipping): entity + service de asignación</span></div><div class="gl-commit"><span class="sha">c9e4f77</span><span class="msg">✨ feat(shipping): assignCarrier write-once</span></div><div class="gl-file" style="margin-top:4px">🌿 rama: 12-shipment-carrier<small>— issue + slug</small></div>',
+  verde:'<span class="glx-cap">Los checks del PR</span><div class="pipe"><span class="job"><i>✓</i>lint</span><span class="job"><i>✓</i>phpcs</span><span class="job"><i>✓</i>architecture</span><span class="job"><i>✓</i>review</span></div><div class="gl-file" style="margin-top:6px">⚙️ architecture corre loads · layers · schema (contra la base real)<small></small></div>',
+  triangular:'<span class="glx-cap">El commit que deja</span><div class="gl-commit"><span class="sha">d2a8b31</span><span class="msg">✅ test(shipping): triangular — NULL en carrier_id</span></div>',
+  recibo:'<span class="glx-cap">Así viaja en la descripción del PR</span><div class="gl-file" style="flex-direction:column;align-items:flex-start;gap:2px"><span>"estado": <b style="color:var(--verde)">"APROBABLE"</b> · gates 5/5 ✓</span><span>"validacion_del_dev": <b style="color:var(--ambar)">"PENDIENTE: recorrido manual en dev"</b></span><span>"no_revisado": [ lo que este recibo NO mira ]</span></div>',
+  mr:'<span class="glx-cap">Así se ve en GitHub</span><div class="gl mini"><div class="gl-head"><span class="gl-chip gl-mr">⇄ #14</span> feat(shipping): transportista del envío <span class="gl-ref">#12 → main</span></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Recibo</span><span>APROBABLE · sha 9f2c… · gates 5/5</span></div><div class="gl-row"><span class="gl-sec">Cierre</span><span class="mono" style="font-size:11.5px">Closes #12</span></div></div></div>'
+};
+const det=document.getElementById('detalle');
+const nodos=document.querySelectorAll('.mit');
+function pinta(k){
+  const d=D[k];
+  det.innerHTML=`<div class="dt-head"><h3>${d.t}</h3>${d.c?`<span class="dt-cmd">${d.c}</span>`:''}</div>
+  <div class="dt-row"><span class="k">Qué es</span><span>${d.que}</span>
+  <span class="k">De qué nace</span><span>${d.nace}</span>
+  <span class="k">Qué hacés vos</span><span>${d.dev}</span>
+  <span class="k">Usa</span><span class="mono" style="font-size:12px;color:var(--sello)">${d.usa}</span>
+  <span class="k">Fuente</span><span class="src">${d.src}</span></div>
+  ${GL[k]?`<div class="glx">${GL[k]}</div>`:''}`;
+  nodos.forEach(n=>n.setAttribute('aria-pressed',n.dataset.k===k?'true':'false'));
+}
+nodos.forEach(n=>n.addEventListener('click',e=>{e.stopPropagation();pinta(n.dataset.k)}));
+pinta('grill');
+
+/* ── navegación de diapositivas ── */
+const slides=[...document.querySelectorAll('.slide')];
+const cnt=document.getElementById('cnt'), tit=document.getElementById('tit'), barra=document.getElementById('barra');
+let i=0;
+function go(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,j)=>{const on=(j===i);s.classList.toggle('act',on);s.style.display=on?'block':'none';});
+  cnt.textContent=`${i+1} / ${slides.length}`;
+  tit.textContent=slides[i].dataset.t||'';
+  barra.style.width=((i+1)/slides.length*100)+'%';
+  try{history.replaceState(null,'','#'+(i+1))}catch(e){}
+  slides[i].scrollTop=0;
+}
+document.getElementById('next').addEventListener('click',()=>go(i+1));
+document.getElementById('prev').addEventListener('click',()=>go(i-1));
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1)}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+  if(e.key==='Home'){go(0)} if(e.key==='End'){go(slides.length-1)}
+});
+const F = {
+  casa:{n:"Lo medido en casa",p:["anclas","glosario","gates","spec"],
+    t:"Las tres anclas (nacidas de un referente elegido por su nombre) · el glosario de homónimos · los gates probados con mutantes · la plantilla entera, corregida con los 8 defectos del piloto. La fuente más grande del flujo somos nosotros: cada regla lleva su incidente y su conteo.",
+    d:"Nada — pero cada regla propia carga la fecha y el número que la sostiene, para poder re-medirla."},
+  pocock:{n:"Matt Pocock (AI Hero)",p:["grill","glosario","seam","spec"],
+    t:"Rondas de frontera y su criterio de terminación · los hechos los busca el agente · glosario activo · el seam decisorio · el filtro DURADERA · colapsar sin re-entrevistar.",
+    d:"Sus ADRs como archivos (acá el hogar único es el issue) · su glosario sin detalle técnico (el nuestro lleva tabla y columna: nuestra confusión ES qué tabla)."},
+  buscaglia:{n:"Alan Buscaglia (Gentle · RDD)",p:["recibo","triangular","gates"],
+    t:"El recibo atado a una huella que habilita el cierre · el estado INCONCLUSO (lo que no pudo medir no es verde ni rojo) · triangular: interrogar lo construido · «terminé ≠ verificado».",
+    d:"RDD sin spec (el recibo certifica el diff, no la intención) · sus 4 lentes como subagentes de opinión, sin evaluación."},
+  harper:{n:"Harper Reed",p:["spec","issue","grill"],
+    t:"El principio fundador de todo el SDD: ni una línea de código hasta que el plan esté revisado y aprobado. La entrevista como camino a la spec.",
+    d:"El «una pregunta por vez» literal — lo reemplazaron las rondas de frontera."},
+  unclebob:{n:"Robert C. Martin",p:["rojo","gates","triangular"],
+    t:"«Sacale todos los asserts a tus tests y la cobertura no cambia» — la cobertura no prueba nada. Rojo antes que verde, y los mutantes como jueces de los tests.",
+    d:"—"},
+  escalera:{n:"Cockburn · Dodds · Testing Library · Pact",p:["seam","gates","rojo"],
+    t:"Walking skeleton → el seam decisorio · dónde pesa cada tipo de test · contenido VISIBLE con valor exacto, no presencia en el DOM · y el límite de Pact vuelto regla: los contratos verifican forma — el seam exige un VALOR que solo el referente correcto produce.",
+    d:"El E2E ancho — el seam es UNO y decisorio, no una capa entera."},
+  humana:{n:"Bainbridge · AWS AI-DLC",p:["compuerta","grill"],
+    t:"La vigilancia pasiva falla: el humano puesto solo a aprobar deja de mirar → la compuerta es una conversación, decidida en vivo por rondas, y SE MIDE (la bitácora cuenta recomendadas vs corregidas).",
+    d:"Los 9 pasos ceremoniales de AI-DLC — la ceremonia se calibra por tamaño."},
+  ciencia:{n:"DataLad · CONSORT · estudios medidos",p:["recibo","gates","spec"],
+    t:"La evidencia viaja con su huella (sha) · cambiar la spec después del rojo se DECLARA (regla OOS) · valores medidos y no exit codes (27% de notebooks «sin error» dieron otro resultado) · el instrumento debe poder registrar el rojo (mybinder: 132.603 eventos, 100% «success»).",
+    d:"—"}
+  ,disenso:{n:"El disenso — también se archiva",p:[],
+    t:"METR: devs con IA 19% más lentos creyendo ir 20% más rápido → nada se defiende por sensación · Ming Liu (32.000+ evaluaciones): cada pieza de andamiaje le cobra atención a la tarea → el paso que no muestre qué defecto evitó, se borra · Rainsberger: los tests integrados se duplican y no presionan el diseño → el seam es UNO · Thoughtworks tiene el SDD «en evaluación» — igual que nosotros: por eso hubo piloto medido.",
+    d:"Nada se ilumina a propósito: el disenso no aporta piezas — las vigila."}
+};
+const fdet=document.getElementById('fdet');
+const fnts=document.querySelectorAll('.fnt');
+const pzs=document.querySelectorAll('.pz');
+function fpinta(k){
+  const f=F[k];
+  fnts.forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===k?'true':'false'));
+  pzs.forEach(z=>z.classList.toggle('on',f.p.includes(z.dataset.p)));
+  fdet.innerHTML=`<h3>${f.n}</h3><div class="fr">
+    <span class="k t">Se tomó</span><span>${f.t}</span>
+    <span class="k d">Se dejó</span><span>${f.d}</span></div>`;
+}
+fnts.forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();fpinta(b.dataset.f)}));
+if(fnts.length) fpinta('casa');
+
+document.querySelectorAll('.tabs').forEach(bar=>{
+  const tabs=[...bar.querySelectorAll('.tab')];
+  const cont=bar.parentElement;
+  function abre(k){
+    tabs.forEach(t=>t.setAttribute('aria-pressed',t.dataset.tab===k?'true':'false'));
+    cont.querySelectorAll('.tabpanel').forEach(p=>p.classList.toggle('act',p.dataset.panel===k));
+  }
+  tabs.forEach(t=>t.addEventListener('click',e=>{e.stopPropagation();abre(t.dataset.tab)}));
+  abre(tabs[0].dataset.tab);
+});
+const h=parseInt(location.hash.slice(1),10);
+go(isNaN(h)?0:h-1);
+</script>
+</body>
+</html>
