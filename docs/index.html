@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>El flujo SDD</title>
-<meta name="description" content="El flujo SDD, en diapositivas: qué es cada pieza, de qué necesidad nace, de qué fuente viene, y cómo se revisó.">
+<meta name="description" content="El flujo SDD de una mirada: diez piezas, tres etapas, y cómo se ve cada una en GitHub.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -258,6 +258,13 @@ p.lead{font-size:clamp(16px,2vw,19px);color:var(--tinta2);max-width:64ch}
 .gl-row{display:flex;gap:9px;align-items:baseline;font-size:12.8px;line-height:1.4}
 .gl-sec{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--sello);background:var(--sello-suave);padding:1px 8px;border-radius:4px;white-space:nowrap}
 .gl-cap{font-size:12.5px;color:var(--tinta2);margin-top:7px;font-style:italic}
+.gh-pill{font-family:"Archivo",sans-serif;font-size:11px;font-weight:700;padding:3px 10px;border-radius:14px;background:#1f883d;color:#fff;white-space:nowrap}
+.gh-num{color:var(--tinta2);font-weight:400}
+.gh-meta{font-size:11.5px;color:var(--tinta2);padding:6px 11px;border-bottom:1px solid var(--linea)}
+.gh-meta code{font-family:"IBM Plex Mono",monospace;font-size:11px;background:var(--sello-suave);color:var(--sello);padding:1px 6px;border-radius:5px}
+.gh-label{font-size:10.5px;font-weight:600;padding:1px 8px;border-radius:10px;border:1px solid var(--sello);color:var(--sello)}
+.gh-ok{color:#1f883d;font-weight:700}
+#nav,#barra{display:none}
 /* ═══ ejemplos github en el detalle ═══ */
 .glx{margin-top:12px;padding-top:10px;border-top:1px dashed var(--linea)}
 .glx .glx-cap{font-family:"Archivo",sans-serif;font-weight:700;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--tinta2);display:block;margin-bottom:6px}
@@ -304,269 +311,10 @@ tr:last-child td{border-bottom:none}
 <body>
 <div id="barra"></div>
 
-<!-- ── 1 · PORTADA ─────────────────────────────── -->
-<section class="slide portada" data-t="Portada">
-  <div class="wrap">
-    <div class="kicker">Samuel Pineda · flujo SDD v1</div>
-    <h1>El flujo <span class="acc">SDD</span></h1>
-    <p class="lead">Cómo desarrollar con agentes: la spec se aprueba antes de codear, los tests
-    se escriben antes que el código, y cada PR trae la evidencia de lo que se corrió.</p>
-    <p class="lead" style="font-size:15px;margin-top:10px">Qué es cada cosa · de dónde
-    sale · cómo se probó · cómo se usa.</p>
-    <div class="stamp">Nada se aprueba por relato — se mide</div>
-  </div>
-</section>
-
-<!-- ── 1b · QUÉ ES UN LLM ──────────────────────── -->
-<section class="slide" data-t="OP 010 · Qué es un LLM">
-  <div class="wrap">
-    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 1 de 3</span></div>
-    <h2>Qué es un LLM — el paper de 2017</h2>
-    <p class="lead"><em>«Attention Is All You Need»</em> (Google, 2017) es la arquitectura de todos los
-    LLM actuales: el <strong>Transformer</strong>. Nació para traducir; terminó leyéndose internet.
-    Vamos por partes:</p>
-    <div class="tabs" role="tablist" aria-label="Conceptos del LLM">
-      <button class="tab" data-tab="token">¿Qué es un token?</button>
-      <button class="tab" data-tab="atencion">La atención</button>
-      <button class="tab" data-tab="transformer">¿Qué es un Transformer?</button>
-      <button class="tab" data-tab="gano">Por qué ganó</button>
-    </div>
-    <div class="tabpanel" data-panel="token">
-      <p><strong>La unidad con la que el modelo lee y escribe.</strong> No ve letras ni palabras: ve
-      <em>tokens</em> — pedazos de texto de unos ¾ de palabra («desarrollador» pueden ser dos o tres),
-      convertidos en números.</p>
-      <p>El contexto, el costo de cada consulta y la salida del modelo se miden en tokens.</p>
-    </div>
-    <div class="tabpanel" data-panel="transformer">
-      <p><strong>Una red neuronal que convierte una secuencia de tokens en la predicción del
-      siguiente.</strong> Los tokens entran como vectores de números, atraviesan decenas de bloques
-      idénticos — cada uno aplica la atención del tab anterior más una red pequeña — y a la salida hay
-      una probabilidad para cada token posible: se elige uno y se repite. No tiene memoria: <strong>re-lee el contexto completo para cada token
-      que produce</strong>. Todos los LLM de hoy — GPT, Claude, Gemini — son variantes de este diseño.</p>
-      <div class="diag" aria-label="Diagrama: tokens entran, N bloques de atención y red, sale la probabilidad del siguiente token">
-        <div class="d-col">
-          <span class="d-cap">contexto (tokens)</span>
-          <div class="d-chips"><span>El</span><span>cliente</span><span>pidió</span><span>un</span><span class="mono">___</span></div>
-        </div>
-        <span class="d-arr">→</span>
-        <div class="d-bloque">
-          <span class="d-cap">× 30–100 bloques iguales</span>
-          <div class="d-inner">
-            <div>atención<small>cada token mira a todos los demás</small></div>
-            <div>red pequeña<small>transforma el resultado</small></div>
-          </div>
-        </div>
-        <span class="d-arr">→</span>
-        <div class="d-col">
-          <span class="d-cap">probabilidad del siguiente token</span>
-          <div class="d-probs">
-            <div><span class="mono">reembolso</span><i style="width:58%"></i><b>58%</b></div>
-            <div><span class="mono">descuento</span><i style="width:21%"></i><b>21%</b></div>
-            <div><span class="mono">cambio</span><i style="width:6%"></i><b>6%</b></div>
-            <div><span class="mono">…</span><i style="width:15%"></i><b>15%</b></div>
-          </div>
-        </div>
-      </div>
-      <div class="d-loop">↻ el token elegido se agrega al contexto — y todo vuelve a correr para el siguiente</div>
-    </div>
-    <div class="tabpanel" data-panel="atencion">
-      <p><strong>Una búsqueda blanda en un diccionario.</strong> Para producir cada token, el modelo deja
-      que cada palabra le «pregunte» a todas las demás cuánto importan (Q pregunta, K indexa, V aporta el
-      contenido), y combina las respuestas con pesos que <strong>suman exactamente 1</strong>.</p>
-      <p>Ese «suman 1» importa: la atención es un <strong>presupuesto fijo</strong>. Todo lo que entra al
-      contexto compite por él — cada cosa de más le cobra atención a la tarea. Vamos a volver a esto
-      cuando hablemos de qué se le pasa al agente y qué no.</p>
-    </div>
-    <div class="tabpanel" data-panel="gano">
-      <p><strong>Porque fue la primera arquitectura que se pudo entrenar a lo grande.</strong>
-      Los modelos anteriores leían en orden: para procesar la palabra 10 había que terminar la 9 —
-      imposible de repartir entre miles de GPUs. El Transformer mira todo el contexto a la vez,
-      así que el entrenamiento se reparte completo.</p>
-      <div class="diag" aria-label="Antes: secuencial. Después: paralelo.">
-        <div class="d-col">
-          <span class="d-cap">antes (RNN) — en orden</span>
-          <div class="d-chips"><span>t1</span><span class="mono">→</span><span>t2</span><span class="mono">→</span><span>t3</span><span class="mono">→</span><span>…</span></div>
-        </div>
-        <div class="d-col">
-          <span class="d-cap">Transformer — todo a la vez</span>
-          <div class="d-chips"><span>t1</span><span>t2</span><span>t3</span><span>t4</span><span>t5</span><span>…</span></div>
-        </div>
-      </div>
-      <p style="margin-top:12px">Misma receta, más máquinas, más texto → mejor modelo. Esa escalera es la
-      que llevó de un traductor de 2017 a los LLM de hoy: <strong>no ganó por ser más listo con poco —
-      ganó por ser el único que podía comerse internet.</strong></p>
-    </div>
-  </div>
-</section>
-
-<!-- ── 2 · CONCEPTOS ───────────────────────────── -->
-<section class="slide" data-t="OP 010 · Conceptos" style="padding-top:36px">
-  <div class="wrap">
-    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 2 de 3</span></div>
-    <h2>Ocho palabras que vamos a usar todo el día</h2>
-    <div class="grid g2" style="gap:8px;margin-top:10px">
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 1</span>
-        <h3>Harness (arnés)</h3>
-        <p style="font-size:13px">Todo lo que rodea al agente para convertir <strong>autonomía cruda en
-        trabajo dirigido</strong>: comandos, gates, plantillas, verificadores. El modelo es el motor;
-        el harness es el chasis, los frenos y el tablero. En el equipo le decimos
-        <strong>el kit</strong> (<span class="mono">tools/harness</span>).</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 2</span>
-        <h3>SDD — Spec-Driven Development</h3>
-        <p style="font-size:13px"><strong>La spec manda; el chat es desechable.</strong> Antes de una
-        línea de código, el pedido se convierte en una especificación revisada por un humano. Lo que el
-        agente rellene solo se marca <span class="mono">DECISIÓN</span> para que lo veas.</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 3</span>
-        <h3>RDD — Receipt-Driven Development</h3>
-        <p style="font-size:13px">La revisión no es una opinión: es un <strong>recibo atado a una
-        huella</strong> — el sha de la spec, qué tests se vieron fallar y pasar, qué gates corrieron.
-        Si cambia un byte, el recibo se invalida. Su artefacto es el recibo (abajo).</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 4</span>
-        <h3>Gate (compuerta automática)</h3>
-        <p style="font-size:13px">Un verificador que <strong>corre solo</strong>: ¿la clase carga?
-        ¿quién importa a quién? ¿la columna existe en la base real? Regla de la casa: un check que
-        devuelve cero <strong>no vale hasta verlo devolver uno</strong>.</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 5</span>
-        <h3>Spec (de 7 ejes)</h3>
-        <p style="font-size:13px">El artefacto central: un formulario <strong>fijo</strong> de 8 preguntas
-        — esquema, alcance, servicio dueño, contrato, retorno, tests, criterios — que sale de la
-        entrevista. Vive en el issue de GitHub y <strong>se congela con un sha</strong> al arrancar los
-        tests: desde ahí, cambiarla se declara, no se esconde.</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 6</span>
-        <h3>Recibo</h3>
-        <p style="font-size:13px">La pieza RDD del flujo: el documento que <span class="mono">/implementar</span>
-        (el comando que corre toda la construcción) deja al cerrar. Lo emite el instrumento
-        (<span class="mono">recibo.sh</span>), no la narración del agente, y sale con un estado:
-        <b class="ok">APROBABLE</b> · <b style="color:var(--ambar)">DEGRADADO</b> · INCONCLUSO ·
-        <b class="mal">FALLANDO</b>. Viaja dentro del PR: es lo primero que lee el revisor.</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 7</span>
-        <h3>Mutante</h3>
-        <p style="font-size:13px">Un defecto <strong>sembrado a propósito</strong> en el código para ver
-        si los tests lo matan — el juez de los tests: si sobrevive con todo en verde, la suite no vigila
-        nada. Así se juzga también al propio kit: casos conocidos-malos contra cada gate.</p>
-      </div>
-      <div class="card" style="padding:9px 14px">
-        <span class="tag">Concepto 8</span>
-        <h3>Seam (costura)</h3>
-        <p style="font-size:13px">El punto <strong>único y decisorio</strong> donde el feature toca la
-        realidad y se valida por fuera: el endpoint que responde, la query contra la base viva. En la
-        entrevista se fija con una sola pregunta — «¿cómo validamos que funciona?» — y exige un
-        <strong>valor que solo el referente correcto produce</strong>, no que "algo aparezca".</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── C2 · TDD (concepto) ─────────────────────── -->
-<section class="slide" data-t="OP 010 · TDD">
-  <div class="wrap">
-    <div class="op"><span class="num">OP 010</span><span class="eyebrow">Para arrancar parejos · 3 de 3</span></div>
-    <h2>TDD: el test existe antes que el código</h2>
-    <p class="lead" style="font-size:15.5px"><strong>Test-Driven Development</strong>: la prueba se
-    escribe ANTES que el código, y dos corridas marcan el ritmo — <b style="color:var(--rojo)">ROJO</b>
-    (todos los tests nuevos fallan: el código no existe, y verlos fallar prueba que los tests prueban
-    algo) y <b style="color:var(--verde)">VERDE</b> (pasan todos + los 5 gates).</p>
-    <div class="ciclo">
-      <div class="paso p-rojo"><b>1 · ROJO</b><span>escribís el test desde la spec, corre, y FALLA — el código aún no existe</span></div>
-      <div class="paso p-verde"><b>2 · VERDE</b><span>escribís el código mínimo que lo hace pasar + corren los 5 gates</span></div>
-      <div class="paso p-tri"><b>3 · TRIANGULAR</b><span>buscás a propósito UN caso que rompa lo construido</span></div>
-      <div class="paso"><b>4 · REFACTOR</b><span>ordenás con la red puesta: los tests te avisan si rompés algo</span></div>
-    </div>
-    <div class="grid" style="grid-template-columns:1fr 1fr;gap:12px">
-      <div>
-<div class="term"><span class="c">// el test nace de la spec — assert de VALOR exacto</span>
-public function testHydratesCarrierId(): void
-{
-    $shipment = new Shipment(['carrier_id' => 41]);
-    $this->assertSame(41, $shipment->getCarrierId());
-}</div>
-<div class="term" style="margin-top:8px"><span class="c">$ recibo.sh rojo 12 …</span>
-<span class="r">FAILURES! Tests: 6, Failures: 6.</span>
-<span class="r">Error: Call to undefined method getCarrierId()</span>
-<span class="g">rojo [ddd-php]: 6 tests, 6 vistos fallar ✓</span></div>
-      </div>
-      <div>
-<div class="term"><span class="c">$ recibo.sh verde 12 …   (tras implementar)</span>
-<span class="g">OK (6 tests, 14 assertions)</span>
-gates: loads <span class="g">✓</span> layers <span class="g">✓</span> schema <span class="g">✓</span> phpcs <span class="g">✓</span> spec <span class="g">✓</span>
-<span class="c">schema corre contra el esquema REAL de la base</span></div>
-        <p style="font-size:13.5px;margin-top:10px"><b>¿Por qué rojo primero?</b> Un test que nace en
-        verde puede estar verificando al mock — es el anti-caso del 100% de cobertura con 4% de verdad.</p>
-        <p style="font-size:13.5px;margin-top:8px"><b>¿Y si un test nuevo nace en verde igual?</b> El
-        recibo lo ficha en <span class="mono">nunca_rojos</span> y el estado sale
-        <b style="color:var(--ambar)">DEGRADADO</b>: no es un rojo — es «aprobable solo si la causa que
-        el recibo anota te convence». El rojo no es trámite: <strong>es la prueba de vida del
-        test</strong>, y saltárselo queda escrito, no escondido.</p>
-        <p style="font-size:13.5px;margin-top:8px"><b>Triangular:</b> los tests de la spec interrogan lo
-        prometido; con el verde en la mano buscás el null que tu getter no espera, el borde de tu if.
-        Rojo → defecto real, vuelve al loop.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── F2 · LA EVIDENCIA ──────────────────────── -->
-<section class="slide" data-t="OP 020 · La evidencia" style="padding-top:38px">
-  <div class="wrap">
-    <div class="op"><span class="num">OP 020</span><span class="eyebrow">La evidencia</span></div>
-    <h2>Medido, no opinado</h2>
-    <p class="lead" style="font-size:14px;max-width:none">Un concepto de la base de conocimiento → una medición propia → una decisión:</p>
-    <div class="card" style="margin-top:8px;padding:10px 20px">
-      <div style="display:flex;flex-direction:column;gap:7px">
-        <p style="font-size:14px"><b>1 ·</b> La base decía que la cobertura no prueba nada: hay que
-        <b>sembrar defectos a propósito en el código</b> (eso es un «mutante») y ver si los tests los
-        matan. Lo hicimos contra una suite generada por IA con 100% de cobertura — <b class="mal">solo
-        murió el 4%</b>. Hoy eso vive implementado como: <b>rojo primero y asserts de valores exactos</b> en cada
-        issue, y mutantes permanentes contra el propio kit — las suites <span class="mono">mutantes*.sh</span>
-        le siembran casos malos a los gates (el 0/11 del punto 2). <span style="color:var(--tinta2)">Próximo:
-        mutar los tests de cada PR (deuda declarada — medida, aún sin implementar).</span></p>
-        <p style="font-size:14px"><b>2 ·</b> Decía también que un verificador no vale hasta
-        <b>verlo fallar</b>. Les dimos casos malos a nuestros propios gates: <b class="mal">9 de 11</b>
-        violaciones pasaban el CI en verde. Por eso hoy cada gate se prueba con un caso malo antes de
-        confiarle nada — y <b class="ok">0 de 11 escapan</b>.</p>
-        <p style="font-size:14px"><b>3 ·</b> Decía que una medición vale si se define QUÉ medir
-        <b>antes</b> de correrla, y a ciegas. Re-corrimos el issue del piloto sin darle las respuestas:
-        <b class="ok">2 errores cazados</b>, <b class="mal">2 repetidos</b> — y con los repetidos se
-        corrigió el estándar.</p>
-        <p style="font-size:14px"><b>4 ·</b> Y decía que al prompt no se le puede confiar la obediencia.
-        Escribimos una regla textual en el prompt de agentes: <b class="mal">2 de 3 la citaron y la
-        violaron igual</b>. Por eso la verificación corre afuera del modelo: gates, spec-check, recibo.</p>
-      </div>
-    </div>
-    <div class="card" style="margin-top:8px;padding:10px 14px">
-      <span class="tag">Benchmark de implementadores · concepto: «la sensación no es evidencia» (METR) — 8 celdas, mismo issue, misma spec congelada, con recibo</span>
-      <div class="twrap" style="margin-top:6px">
-        <table style="font-size:12px" class="compacta">
-          <tr><th style="white-space:nowrap">Modelo (×2 c/u)</th><th>Recibo</th><th style="white-space:nowrap">Tests · rojos</th><th>Tiempo</th><th>Costo</th><th>Lo notable</th></tr>
-          <tr><td><b>opus</b></td><td><span class="ok">APROBABLE ×2</span></td><td style="white-space:nowrap">57/57·12 y 58/58·13</td><td>24.5–26.6 min</td><td>$14.5–16.5</td><td>cazó una colisión de columnas que la spec no vio</td></tr>
-          <tr><td><b>codex</b> (gpt-5.6)</td><td><span class="ok">APROBABLE ×2</span></td><td style="white-space:nowrap">55/55 ×2 · 8</td><td>~45–50 min</td><td>~245k tok ChatGPT · <b>$0 Anthropic</b></td><td>misma calidad semántica que opus; también cazó la colisión</td></tr>
-          <tr><td><b>sonnet</b></td><td><span class="mal">DNF</span> (no terminó) / <span class="ok">APROBABLE</span></td><td style="white-space:nowrap">58/58 · 18</td><td>28.2 / 37.7 min (la más lenta)</td><td>$7.1 / $9.4</td><td>calidad ok cuando termina; 1 de 2 no terminó (murió esperando un phpunit)</td></tr>
-          <tr><td><b>haiku</b></td><td><span class="mal">FALLANDO ×2</span></td><td style="white-space:nowrap">55/55 y 56/57 · <b class="mal">0</b></td><td>8.3–8.8 min</td><td>$1.2</td><td><b>narró el verde</b> con bug de datos silencioso — el recibo la desmintió</td></tr>
-        </table>
-      </div>
-      <p style="font-size:12.5px;color:var(--tinta2);margin-top:6px">Cronómetro Orca vs nativos (3 reps por lado): indistinguibles → la herramienta se elige por capacidades.
-      <b style="color:var(--tinta)">Decisión:</b> grill y orquestación en opus · implementación: codex u opus · sonnet no entra como implementador · haiku no para este calibre. Límites declarados: n=2 por modelo, un issue, una máquina.</p>
-    </div>
-  </div>
-</section>
-
 <!-- ── 5 · EL MAPA ─────────────────────────────── -->
 <section class="slide" data-t="OP 030 · El flujo, de una mirada">
   <div class="wrap">
-    <div class="op"><span class="num">OP 030</span><span class="eyebrow">El flujo</span></div>
+    <div class="op"><span class="num">SDD</span><span class="eyebrow">Spec-Driven Development · Samuel Pineda</span></div>
     <h2>El flujo, de una mirada</h2>
     <p class="lead">Diez piezas, tres etapas. Tocá una — el detalle aparece al lado.</p>
     <div class="mflujo">
@@ -625,13 +373,13 @@ const GL = {
   premisa:'<span class="glx-cap">Todavía no vive en GitHub</span><div class="gl-file">✉️ solicitud del cliente<small>— frase, párrafo o imagen del pedido</small></div>',
   grill:'<span class="glx-cap">Lo que deja en el repo</span><div class="gl-file">📄 docs/specs/12/grill.json<small>— la bitácora: recomendadas vs corregidas</small></div><div class="gl-file" style="margin-top:4px">📄 docs/glosario.md<small>— +1 fila por homónimo resuelto</small></div>',
   spec:'<span class="glx-cap">Los 8 ejes, uno por uno</span><div class="gl mini"><div class="gl-body"><div class="gl-row"><span class="gl-sec">Eje 0</span><span><b>Mapa de impacto</b> — qué repos de la cadena se tocan y cuáles NO, con motivo</span></div><div class="gl-row"><span class="gl-sec">Eje 1</span><span><b>Esquema</b> — tablas y columnas, migración, backfill (cada referente con sus 3 anclas)</span></div><div class="gl-row"><span class="gl-sec">Eje 2</span><span><b>Alcance</b> — qué entra y la lista explícita de lo que NO se toca</span></div><div class="gl-row"><span class="gl-sec">Eje 3</span><span><b>Servicio dueño</b> — dónde vive la lógica, transacción, cómo se rechaza (clase y código exactos)</span></div><div class="gl-row"><span class="gl-sec">Eje 4</span><span><b>Contrato</b> — interfaz nueva o reuso, aridad de clave, behaviors</span></div><div class="gl-row"><span class="gl-sec">Eje 5</span><span><b>Retorno</b> — el tipo exacto que devuelve (entity, colección, aggregate…)</span></div><div class="gl-row"><span class="gl-sec">Eje 6</span><span><b>Tests</b> — el seam decisorio + cada test con el VALOR exacto que asserta</span></div><div class="gl-row"><span class="gl-sec">Eje 7</span><span><b>Criterios de aceptación</b> — CUANDO… ENTONCES…, cada uno apuntando a su test</span></div></div></div>',
-  issue:'<span class="glx-cap">Así se ve en GitHub</span><div class="gl mini"><div class="gl-head"><span class="gl-chip gl-open">● Abierto</span> Asignar transportista al envío <span class="gl-ref">ddd-php#12</span></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Eje 0</span><span>mapa de impacto — qué se toca y los «no se toca»</span></div><div class="gl-row"><span class="gl-sec">Eje 6</span><span>seam: curl ⇒ carrier 41 «EXPRESS»</span></div><div class="gl-row"><span class="gl-sec">Decisiones</span><span><b>Duraderas: D1 · D2 · D8</b></span></div></div></div>',
+  issue:'<span class="glx-cap">Así se ve en GitHub — el issue</span><div class="gl mini"><div class="gl-head"><span class="gh-pill">⊙ Open</span> Asignar transportista al envío <span class="gh-num">#12</span></div><div class="gh-meta"><b>Spinedac3</b> opened this issue · <span class="gh-label">spec</span></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Eje 0</span><span>mapa de impacto — qué se toca y los «no se toca»</span></div><div class="gl-row"><span class="gl-sec">Eje 6</span><span>seam: curl ⇒ carrier 41 «EXPRESS»</span></div><div class="gl-row"><span class="gl-sec">Decisiones</span><span><b>Duraderas: D1 · D2 · D8</b></span></div></div></div>',
   rojo:'<span class="glx-cap">El commit que deja</span><div class="gl-commit"><span class="sha">a1f09e2</span><span class="msg">✅ test(shipping): tests del eje 6 — vistos fallar</span></div><div class="gl-file" style="margin-top:4px">📄 recibo: "fase_rojo": { "tests_vistos_fallar": 6 }<small></small></div>',
   codigo:'<span class="glx-cap">Los commits, en su rama</span><div class="gl-commit"><span class="sha">b7c2d10</span><span class="msg">✨ feat(shipping): entity + service de asignación</span></div><div class="gl-commit"><span class="sha">c9e4f77</span><span class="msg">✨ feat(shipping): assignCarrier write-once</span></div><div class="gl-file" style="margin-top:4px">🌿 rama: 12-shipment-carrier<small>— issue + slug</small></div>',
-  verde:'<span class="glx-cap">Los checks del PR</span><div class="pipe"><span class="job"><i>✓</i>lint</span><span class="job"><i>✓</i>phpcs</span><span class="job"><i>✓</i>architecture</span><span class="job"><i>✓</i>review</span></div><div class="gl-file" style="margin-top:6px">⚙️ architecture corre loads · layers · schema (contra la base real)<small></small></div>',
+  verde:'<span class="glx-cap">Así se ve en GitHub — los checks del PR</span><div class="gl mini"><div class="gl-head"><span class="gh-ok">✓</span> All checks have passed <span class="gh-num">4 successful checks</span></div><div class="gl-body"><div class="gl-row"><span class="gh-ok">✓</span><span><b>lint</b> — sintaxis</span></div><div class="gl-row"><span class="gh-ok">✓</span><span><b>phpcs</b> — estilo</span></div><div class="gl-row"><span class="gh-ok">✓</span><span><b>architecture</b> — loads · layers · schema (contra la base real)</span></div><div class="gl-row"><span class="gh-ok">✓</span><span><b>tests</b> — phpunit</span></div></div></div>',
   triangular:'<span class="glx-cap">El commit que deja</span><div class="gl-commit"><span class="sha">d2a8b31</span><span class="msg">✅ test(shipping): triangular — NULL en carrier_id</span></div>',
   recibo:'<span class="glx-cap">Así viaja en la descripción del PR</span><div class="gl-file" style="flex-direction:column;align-items:flex-start;gap:2px"><span>"estado": <b style="color:var(--verde)">"APROBABLE"</b> · gates 5/5 ✓</span><span>"validacion_del_dev": <b style="color:var(--ambar)">"PENDIENTE: recorrido manual en dev"</b></span><span>"no_revisado": [ lo que este recibo NO mira ]</span></div>',
-  mr:'<span class="glx-cap">Así se ve en GitHub</span><div class="gl mini"><div class="gl-head"><span class="gl-chip gl-mr">⇄ #14</span> feat(shipping): transportista del envío <span class="gl-ref">#12 → main</span></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Recibo</span><span>APROBABLE · sha 9f2c… · gates 5/5</span></div><div class="gl-row"><span class="gl-sec">Cierre</span><span class="mono" style="font-size:11.5px">Closes #12</span></div></div></div>'
+  mr:'<span class="glx-cap">Así se ve en GitHub — el pull request</span><div class="gl mini"><div class="gl-head"><span class="gh-pill">⇄ Open</span> feat(shipping): transportista del envío <span class="gh-num">#14</span></div><div class="gh-meta"><b>Spinedac3</b> wants to merge 4 commits into <code>main</code> from <code>12-shipment-carrier</code></div><div class="gl-body"><div class="gl-row"><span class="gl-sec">Recibo</span><span>APROBABLE · sha 9f2c… · gates 5/5</span></div><div class="gl-row"><span class="gl-sec">Cierre</span><span class="mono" style="font-size:11.5px">Closes #12</span></div><div class="gl-row"><span class="gh-ok">✓</span><span>All checks have passed</span></div></div></div>'
 };
 const det=document.getElementById('detalle');
 const nodos=document.querySelectorAll('.mit');
@@ -669,48 +417,7 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
   if(e.key==='Home'){go(0)} if(e.key==='End'){go(slides.length-1)}
 });
-const F = {
-  casa:{n:"Lo medido en casa",p:["anclas","glosario","gates","spec"],
-    t:"Las tres anclas (nacidas de un referente elegido por su nombre) · el glosario de homónimos · los gates probados con mutantes · la plantilla entera, corregida con los 8 defectos del piloto. La fuente más grande del flujo somos nosotros: cada regla lleva su incidente y su conteo.",
-    d:"Nada — pero cada regla propia carga la fecha y el número que la sostiene, para poder re-medirla."},
-  pocock:{n:"Matt Pocock (AI Hero)",p:["grill","glosario","seam","spec"],
-    t:"Rondas de frontera y su criterio de terminación · los hechos los busca el agente · glosario activo · el seam decisorio · el filtro DURADERA · colapsar sin re-entrevistar.",
-    d:"Sus ADRs como archivos (acá el hogar único es el issue) · su glosario sin detalle técnico (el nuestro lleva tabla y columna: nuestra confusión ES qué tabla)."},
-  buscaglia:{n:"Alan Buscaglia (Gentle · RDD)",p:["recibo","triangular","gates"],
-    t:"El recibo atado a una huella que habilita el cierre · el estado INCONCLUSO (lo que no pudo medir no es verde ni rojo) · triangular: interrogar lo construido · «terminé ≠ verificado».",
-    d:"RDD sin spec (el recibo certifica el diff, no la intención) · sus 4 lentes como subagentes de opinión, sin evaluación."},
-  harper:{n:"Harper Reed",p:["spec","issue","grill"],
-    t:"El principio fundador de todo el SDD: ni una línea de código hasta que el plan esté revisado y aprobado. La entrevista como camino a la spec.",
-    d:"El «una pregunta por vez» literal — lo reemplazaron las rondas de frontera."},
-  unclebob:{n:"Robert C. Martin",p:["rojo","gates","triangular"],
-    t:"«Sacale todos los asserts a tus tests y la cobertura no cambia» — la cobertura no prueba nada. Rojo antes que verde, y los mutantes como jueces de los tests.",
-    d:"—"},
-  escalera:{n:"Cockburn · Dodds · Testing Library · Pact",p:["seam","gates","rojo"],
-    t:"Walking skeleton → el seam decisorio · dónde pesa cada tipo de test · contenido VISIBLE con valor exacto, no presencia en el DOM · y el límite de Pact vuelto regla: los contratos verifican forma — el seam exige un VALOR que solo el referente correcto produce.",
-    d:"El E2E ancho — el seam es UNO y decisorio, no una capa entera."},
-  humana:{n:"Bainbridge · AWS AI-DLC",p:["compuerta","grill"],
-    t:"La vigilancia pasiva falla: el humano puesto solo a aprobar deja de mirar → la compuerta es una conversación, decidida en vivo por rondas, y SE MIDE (la bitácora cuenta recomendadas vs corregidas).",
-    d:"Los 9 pasos ceremoniales de AI-DLC — la ceremonia se calibra por tamaño."},
-  ciencia:{n:"DataLad · CONSORT · estudios medidos",p:["recibo","gates","spec"],
-    t:"La evidencia viaja con su huella (sha) · cambiar la spec después del rojo se DECLARA (regla OOS) · valores medidos y no exit codes (27% de notebooks «sin error» dieron otro resultado) · el instrumento debe poder registrar el rojo (mybinder: 132.603 eventos, 100% «success»).",
-    d:"—"}
-  ,disenso:{n:"El disenso — también se archiva",p:[],
-    t:"METR: devs con IA 19% más lentos creyendo ir 20% más rápido → nada se defiende por sensación · Ming Liu (32.000+ evaluaciones): cada pieza de andamiaje le cobra atención a la tarea → el paso que no muestre qué defecto evitó, se borra · Rainsberger: los tests integrados se duplican y no presionan el diseño → el seam es UNO · Thoughtworks tiene el SDD «en evaluación» — igual que nosotros: por eso hubo piloto medido.",
-    d:"Nada se ilumina a propósito: el disenso no aporta piezas — las vigila."}
-};
-const fdet=document.getElementById('fdet');
-const fnts=document.querySelectorAll('.fnt');
-const pzs=document.querySelectorAll('.pz');
-function fpinta(k){
-  const f=F[k];
-  fnts.forEach(b=>b.setAttribute('aria-pressed',b.dataset.f===k?'true':'false'));
-  pzs.forEach(z=>z.classList.toggle('on',f.p.includes(z.dataset.p)));
-  fdet.innerHTML=`<h3>${f.n}</h3><div class="fr">
-    <span class="k t">Se tomó</span><span>${f.t}</span>
-    <span class="k d">Se dejó</span><span>${f.d}</span></div>`;
-}
-fnts.forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();fpinta(b.dataset.f)}));
-if(fnts.length) fpinta('casa');
+
 
 document.querySelectorAll('.tabs').forEach(bar=>{
   const tabs=[...bar.querySelectorAll('.tab')];
