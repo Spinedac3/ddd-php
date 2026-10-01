@@ -111,17 +111,27 @@ if [ -f "vendor/bin/phpunit" ] && [ -n "$PHPUNIT_CONF" ]; then
     HAVE_PHPUNIT=true
 fi
 
-correr_tests() { # $1 = xml de salida; deja el log en $DIR. Devuelve el exit de phpunit.
-    vendor/bin/phpunit -c "$PHPUNIT_CONF" --no-coverage --log-junit "$1" "${TESTS[@]}" > "$DIR/phpunit-$FASE.log" 2>&1
+# Una corrida por ruta: PHPUnit 9 acepta UNA sola ruta y descarta las demás en silencio — con
+# varias rutas el recibo certificaba solo la primera. Cada corrida deja su junit ($1.N).
+correr_tests() { # $1 = prefijo del xml de salida; deja el log en $DIR. Devuelve 1 si alguna falla.
+    local i=0 rc=0 t
+    rm -f "$1".*
+    : > "$DIR/phpunit-$FASE.log"
+    for t in "${TESTS[@]}"; do
+        i=$((i + 1))
+        vendor/bin/phpunit -c "$PHPUNIT_CONF" --no-coverage --log-junit "$1.$i" "$t" >> "$DIR/phpunit-$FASE.log" 2>&1 || rc=1
+    done
+    return $rc
 }
 
 correr_smoke() { # corre el comando de smoke; deja log y devuelve su exit
     "${TESTS[@]}" > "$DIR/smoke-$FASE.log" 2>&1
 }
 
-leer_junit() { # $1 = xml; emite el JSON del parser o corta ruidoso si no hay junit
-    local r
-    r=$(php "$S/recibo-junit.php" "$1")
+leer_junit() { # $1 = prefijo de los xml; emite el JSON del parser o corta ruidoso si falta alguno
+    local r i=0 xmls=()
+    for _ in "${TESTS[@]}"; do i=$((i + 1)); xmls+=("$1.$i"); done
+    r=$(php "$S/recibo-junit.php" "${xmls[@]}")
     if printf '%s' "$r" | grep -q '"error"'; then
         echo "la corrida no entrego junit legible — esto NO es una fase valida. Ultimas lineas:" >&2
         tail -5 "$DIR/phpunit-$FASE.log" >&2
