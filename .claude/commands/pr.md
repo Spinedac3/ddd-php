@@ -59,7 +59,7 @@ preguntarlo es re-preguntar lo que sabés.
 ## Plantilla de salida
 
 Las secciones marcadas *(spec)* van solo cuando la pieza viene de `/implementar`. Un ejemplo
-completo: [`docs/specs/12/pr.md`](../../docs/specs/12/pr.md).
+completo: el [pull request #4](https://github.com/Spinedac3/ddd-php/pull/4) de este repositorio.
 
 ```markdown
 **Tipo:** <feature | fix | refactor | docs | chore>
