@@ -1,6 +1,6 @@
 {
-  "recibo": "v0-piloto",
-  "leeme": "EJEMPLO con datos inventados. APROBABLE = todo lo medido en verde · DEGRADADO = aprobable si las causas de 'notas' convencen (cada una dice si es del cambio o del kit) · INCONCLUSO = un verificador no pudo correr: no se sabe, se resuelve y se repite · FALLANDO = no aprobar. 'no_revisado' lista lo que este recibo NO mira y quien si lo cubre.",
+  "recibo": "v0",
+  "leeme": "EJEMPLO con datos inventados. APROBABLE = todo lo medido en verde · DEGRADADO = aprobable si las causas de 'notas' convencen · INCONCLUSO = un verificador no pudo correr: no se sabe, se resuelve y se repite · FALLANDO = no aprobar. 'no_revisado' lista lo que este recibo NO mira y quien si lo cubre.",
   "issue": "12",
   "repo": "ddd-php",
   "rama": "12-driver-search",
@@ -24,26 +24,39 @@
       "Spineda\\DddFoundation\\Tests\\Unit\\Services\\Shipping\\DriverAssignmentServiceTest::testListPaginatedResolvesTextToDriverCodes"
     ]
   },
-  "tests": { "corridos": 11, "fallas": 0, "nunca_rojos": [] },
+  "tests": {
+    "corridos": 11,
+    "fallas": 0,
+    "nunca_rojos": []
+  },
   "smoke": null,
   "gates": {
-    "loads": { "exit": 0, "resumen": "loads: 3 archivos · 0 con error de sintaxis · 0 que no cargan" },
-    "layers": { "exit": 0, "resumen": "layers: 3 archivos · 0 violacion(es)" },
-    "schema": { "exit": 0, "resumen": "schema: no hay archivos de Persistencies/Entities que revisar." },
-    "phpcs": { "exit": 0, "resumen": "phpcs: 5 archivos · 0 con violaciones" },
-    "spec": { "exit": 0, "resumen": "spec-check: 0 violacion(es) en docs/specs/12/issue.md" }
-  },
-  "manifiesto": {
-    "exit": 0,
-    "estado": "VIGENTE — los verificadores son los mismos que se probaron el 2026-05-12T10:39:02 y todos cazaron lo que debian:"
+    "loads": {
+      "exit": 0,
+      "resumen": "loads: 3 archivos · 0 con error de sintaxis · 0 que no cargan"
+    },
+    "layers": {
+      "exit": 0,
+      "resumen": "layers: 3 archivos · 0 violacion(es)"
+    },
+    "phpcs": {
+      "exit": 0,
+      "resumen": "phpcs: 5 archivos · 0 con violaciones"
+    },
+    "spec": {
+      "exit": 0,
+      "resumen": "spec-check: 0 violacion(es) en docs/specs/12/issue.md"
+    }
   },
   "estado": "APROBABLE",
   "notas": [],
   "no_revisado": [
+    "gate schema: no existe en ddd-php",
     "validacion del dev: sin lista — si la spec exige recorrido critico o CA manual, este recibo no dice que validar",
-    "triangular (paso 8b): sin instrumento que lo verifique — el PR debe decir que caso se busco contra lo construido",
-    "si el cambio hace lo que el negocio pidio: ningun gate lo mide — lo revisa el humano contra la spec",
-    "la coherencia entre los PRs de la cadena (library/api/web): todavia no hay gate que la mire",
-    "tests fuera de la lista de la spec: aca no corren — la suite completa la corre el pipeline del PR"
+    "triangular: sin instrumento que lo verifique — el PR debe decir que caso se busco contra lo construido",
+    "si el cambio hace lo que se pidio: ningun gate lo mide — lo revisa el humano contra la spec",
+    "la coherencia entre los PRs de la cadena: todavia no hay gate que la mire",
+    "tests fuera de la lista de la spec: aca no corren — la suite completa la corre el pipeline del PR",
+    "los verificadores del kit: no hay manifiesto que certifique que cada gate se vio fallar tras su ultimo cambio"
   ]
 }
