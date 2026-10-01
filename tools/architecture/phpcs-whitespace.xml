@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Method spacing">
+    <description>
+        Second phpcs pass beside PSR-12: exactly one blank line between methods. PSR-12 alone lets
+        several blank lines between two methods through in green.
+        Squiz.WhiteSpace.SuperfluousWhitespace does not catch it (it only looks inside function
+        bodies); this one does.
+    </description>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1"/>
+            <property name="spacingBeforeFirst" value="0"/>
+            <property name="spacingAfterLast" value="0"/>
+        </properties>
+    </rule>
+</ruleset>
