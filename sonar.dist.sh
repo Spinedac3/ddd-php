@@ -1,7 +1,7 @@
 #!/bin/bash
 
 /opt/sonarqube/sonar-scanner/bin/sonar-scanner \
-  -Dsonar.projectKey=proaktiv \
+  -Dsonar.projectKey=ddd-php \
   -Dsonar.sources=src \
   -Dsonar.host.url=http://localhost:9000 \
   -Dsonar.login=key \

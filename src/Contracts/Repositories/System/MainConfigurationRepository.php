@@ -7,7 +7,7 @@ use Spineda\DddFoundation\Entities\Database\Eloquent\Connection;
 /**
  * Contract for the main configuration
  *
- * @package Proaktiv
+ * @package Spineda\DddFoundation
  */
 interface MainConfigurationRepository
 {
