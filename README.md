@@ -1,19 +1,33 @@
-# DDD para PHP
+# DDD para PHP, guiado por IA
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/Spinedac3/ddd-php/?branch=main)
 
-> **In English:** this repository holds the base architectural classes for a layered,
-> Domain-Driven PHP project, plus the Spec-Driven Development flow used to build on top of them
-> with coding agents. The code, its comments and [`CLAUDE.md`](CLAUDE.md) are in English; the
+> **In English:** a Domain-Driven Design foundation for PHP, built to be developed with coding
+> agents through Spec-Driven Development: the base architectural classes and the flow, gates
+> and doctrine that guide an agent building on them. The code, its comments and [`CLAUDE.md`](CLAUDE.md) are in English; the
 > documentation of the flow (this README, the commands, the spec template and the examples) is
 > in Spanish.
 
 ## ¿Qué es esto?
 
-Este repositorio busca implementar las clases de arquitectura para cualquier proyecto que
-quiera basarse en el [Domain Driven Design de Eric Evans](https://www.amazon.com/gp/product/0321125215/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0321125215&linkCode=as2&tag=martinfowlerc-20).
+Una base para construir proyectos PHP con **Domain-Driven Design**, pensada desde el inicio
+para desarrollarse **guiada por IA con Spec-Driven Development (SDD)**. Son dos cosas que acá
+van juntas, no una al lado de la otra:
 
-## Cómo está organizado
+- **La arquitectura** — las clases base del [Domain Driven Design de Eric Evans](https://www.amazon.com/gp/product/0321125215/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0321125215&linkCode=as2&tag=martinfowlerc-20):
+  entidades, repositorios, servicios, aggregates y value objects, en capas.
+- **La forma de trabajarla con agentes** — el flujo SDD: la spec se aprueba antes de escribir
+  código, los tests se ven fallar antes de que el código exista, y cada pull request lleva la
+  evidencia de lo que de verdad se corrió.
+
+La arquitectura le da al agente una forma fija que seguir; el flujo verifica, con chequeos que
+corren solos, que la haya seguido. Una regla de capas que solo está escrita se viola; acá cada
+regla tiene su gate.
+
+**[El flujo SDD: del pedido al recibo →](https://spinedac3.github.io/ddd-php/)** — las diez
+piezas del flujo, con capturas de cómo se ven en GitHub.
+
+## La arquitectura
 
 El proyecto se organiza en directorios principales, uno por cada objeto base de DDD:
 
@@ -33,24 +47,11 @@ Y además, algunos objetos de infraestructura:
 
 ## El flujo SDD
 
-Este repositorio también trae el **flujo** con el que se construye sobre estas clases usando
-agentes de código: Spec-Driven Development. La spec se aprueba antes de escribir código, los
-tests se ven fallar antes de que el código exista, y cada pull request lleva la evidencia de lo
-que de verdad se corrió.
-
-**[El flujo, de una mirada →](https://spinedac3.github.io/ddd-php/)** — diez piezas en tres
-etapas, cada una con un ejemplo de cómo se ve en GitHub.
-
 ```
 decidir       premisa → /grill → spec de 7 ejes → issue
 construir     fase roja → código → verde + gates → triangular      (lo corre /implementar)
 entregar      recibo → /pr
 ```
-
-Hay un ejemplo completo y llenado en [`docs/specs/12/`](docs/specs/12/): la
-[spec](docs/specs/12/issue.md), la [bitácora de la entrevista](docs/specs/12/grill.json), el
-[recibo](docs/specs/12/recibo.json) y el [pull request](docs/specs/12/pr.md). El caso y sus
-datos son inventados; la forma es exactamente la que produce el flujo.
 
 ### Conceptos
 
