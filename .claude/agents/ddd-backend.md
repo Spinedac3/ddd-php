@@ -252,10 +252,15 @@ class ORMDriverRepository extends ORMAbstractRepository implements Contract
      *
      * @return  Driver
      * @throws  DriverNotFoundException
+     * @throws  InvalidArgumentException
      */
     public function get(mixed $key): Driver
     {
-        $entity = $this->findById($key);
+        if (!is_numeric($key)) {
+            throw new InvalidArgumentException('El identificador de conductor no es válido', 406);
+        }
+
+        $entity = $this->findById((int) $key);
 
         if (null === $entity) {
             throw new DriverNotFoundException();
@@ -325,7 +330,9 @@ class ORMDriverRepository extends ORMAbstractRepository implements Contract
 - Every method the contract declares is implemented here — the example above would not load
   without `listPaginatedDriver()`.
 - Contract imported **aliased as `Contract`**; `{@inheritDoc}` + `@see  Contract::method()`.
-- `get()` keeps the parent's parameters (`mixed $key`) and narrows the return type.
+- `get()` keeps the parent's parameters (`mixed $key`) and narrows the return type. **Guard
+  the `mixed` key before handing it to a typed `find*`**: without it a non-numeric key escapes
+  as a `TypeError` instead of the 406 the caller is promised.
 - **Guard first**: `InvalidArgumentException`, code **406**, Spanish message, inline.
 - Hydrate explicitly: `new Entity($record->getAttributes())`, in a `foreach` for collections.
 - `processFiltersToQuery($query, $filters, $joinInfo)` is inherited; it only searches columns

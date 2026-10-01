@@ -70,6 +70,9 @@ TESTS=("$@")
 SPEC="$(cd "$(dirname "$SPEC")" && pwd)/$(basename "$SPEC")"
 cd "$REPO" || { echo "repo inexistente: $REPO"; exit 2; }
 RNAME="$(basename "$REPO")"
+# La spec se nombra relativa al repo cuando vive adentro: una ruta absoluta de la máquina del
+# dev no tiene nada que hacer dentro de un recibo que se commitea.
+SPEC_REL="${SPEC#"$(pwd)/"}"
 # <ISSUE> nombra la carpeta de la corrida: <repo-hogar>-<n> — el número pelado choca entre
 # repos cuando la cadena tiene varios. _local/corridas nace sola (mkdir -p) y git la ignora.
 DIR="${RECIBO_CORRIDAS:-$ROOT/_local/corridas}/$ISSUE/$RNAME"
@@ -144,7 +147,7 @@ case "$FASE" in
 rojo)
     # La forma se verifica ANTES de congelar: una spec malformada congelada se implementa
     # entera y truena recién en verde.
-    if [ -f "$S/spec-check.sh" ] && ! bash "$S/spec-check.sh" "$SPEC"; then
+    if [ -f "$S/spec-check.sh" ] && ! bash "$S/spec-check.sh" "$SPEC_REL"; then
         echo "rojo: la spec NO pasa la forma — arreglala en el ISSUE, re-baja el dump (spec-dump.sh) y volve. No se congela una spec malformada." >&2
         exit 1
     fi
@@ -263,7 +266,7 @@ verde)
     # Gate de forma de la spec: corre contra el dump, viva donde viva la pieza (el script es
     # del kit, $S). Mismo trato que los gates: 2 = INCONCLUSO, 1 = FALLANDO.
     if [ -f "$S/spec-check.sh" ]; then
-        OUT=$(bash "$S/spec-check.sh" "$SPEC" 2>&1)
+        OUT=$(bash "$S/spec-check.sh" "$SPEC_REL" 2>&1)
         E=$?
         if [ "$E" -eq 2 ]; then
             GATE_NO_CORRIO=1
