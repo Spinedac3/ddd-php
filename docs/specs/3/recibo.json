@@ -1,0 +1,26 @@
+{
+  "recibo": "v0",
+  "leeme": "APROBABLE = todo lo medido en verde · DEGRADADO = aprobable si las causas de 'notas' convencen · INCONCLUSO = un verificador no pudo correr: no se sabe, se resuelve y se repite · FALLANDO = no aprobar. 'no_revisado' lista lo que este recibo NO mira y quien si lo cubre.",
+  "issue": "ddd-php-3",
+  "repo": "ddd-php",
+  "rama": "3-shipping-driver",
+  "fecha": "2026-10-01T13:33:32",
+  "commit": "794a7b4",
+  "php": "8.4.18",
+  "modelo": "claude-fable-5-1",
+  "validacion_del_dev": null,
+  "spec": {
+    "sha256": "72e0ba633ec220f3453477017e19483218717a517a92b0a2610cf9fbd4c215e2",
+    "cambiada": false
+  },
+  "fase_rojo": {
+    "corridas": 1,
+    "tests_vistos_fallar": ["Spineda\\DddFoundation\\Tests\\Unit\\Entities\\Shipping\\DriverTest::testHydratesTheColumns","Spineda\\DddFoundation\\Tests\\Unit\\Entities\\Shipping\\DriverTest::testRequiresTheCode","Spineda\\DddFoundation\\Tests\\Unit\\Factories\\Repositories\\Shipping\\DriverFactoryTest::testGetReturnsTheSameRepository","Spineda\\DddFoundation\\Tests\\Unit\\Repositories\\Database\\ORM\\Shipping\\ORMDriverRepositoryTest::testFindByIdHydratesTheDriver","Spineda\\DddFoundation\\Tests\\Unit\\Repositories\\Database\\ORM\\Shipping\\ORMDriverRepositoryTest::testFindByIdRejectsANonPositiveId","Spineda\\DddFoundation\\Tests\\Unit\\Repositories\\Database\\ORM\\Shipping\\ORMDriverRepositoryTest::testFindByIdReturnsNullWhenMissing","Spineda\\DddFoundation\\Tests\\Unit\\Repositories\\Database\\ORM\\Shipping\\ORMDriverRepositoryTest::testGetThrowsWhenMissing","Spineda\\DddFoundation\\Tests\\Unit\\Services\\Shipping\\DriverServiceTest::testGetReturnsTheDriverOfTheRepository"]
+  },
+  "tests": {"corridos":8,"fallas":0,"nunca_rojos":[]},
+  "smoke": null,
+  "gates": {"loads":{"exit":0,"resumen":"loads: 7 archivos · 0 con error de sintaxis · 0 que no cargan"},"layers":{"exit":0,"resumen":"layers: 7 archivos · 0 violacion(es)"},"phpcs":{"exit":0,"resumen":"phpcs: 11 archivos · 0 con violaciones"},"spec":{"exit":0,"resumen":"spec-check: 0 violacion(es) en /c/Sites/ddd-php/docs/specs/3/issue.md"}},
+  "estado": "APROBABLE",
+  "notas": [],
+  "no_revisado": ["gate schema: no existe en ddd-php","validacion del dev: sin lista — si la spec exige recorrido critico o CA manual, este recibo no dice que validar","triangular: sin instrumento que lo verifique — el PR debe decir que caso se busco contra lo construido","si el cambio hace lo que se pidio: ningun gate lo mide — lo revisa el humano contra la spec","la coherencia entre los PRs de la cadena: todavia no hay gate que la mire","tests fuera de la lista de la spec: aca no corren — la suite completa la corre el pipeline del PR","los verificadores del kit: no hay manifiesto que certifique que cada gate se vio fallar tras su ultimo cambio"]
+}
