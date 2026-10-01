@@ -1,0 +1,21 @@
+{
+  "iid": 12,
+  "proyecto": "Spinedac3/ddd-php",
+  "fecha": "2026-05-12",
+  "rondas": [
+    {"ronda": 1, "preguntas": 3, "con_recomendada": 2, "corregidas": 0, "propias": 1, "hechos_despachados": 2},
+    {"ronda": 2, "preguntas": 2, "con_recomendada": 1, "corregidas": 1, "propias": 0, "hechos_despachados": 0},
+    {"ronda": 3, "preguntas": 2, "con_recomendada": 1, "corregidas": 0, "propias": 1, "hechos_despachados": 0}
+  ],
+  "totales": {
+    "rondas_registradas": 3,
+    "preguntas": 7,
+    "con_recomendada": 4,
+    "corregidas": 1,
+    "propias": 2,
+    "hechos_despachados": 2,
+    "tasa_recomendadas": 0.571
+  },
+  "subagentes_de_hechos": 2,
+  "nota": "EJEMPLO con datos inventados. Los dos hechos despachados fueron sondas de solo lectura contra dev: qué columnas indexa el buscador de conductores y quién más llama a listPaginated() del repositorio. La corregida de la ronda 2 es D3: la recomendada era quitar la búsqueda directa por número y el dev decidió conservarla."
+}

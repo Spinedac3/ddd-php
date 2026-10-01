@@ -1,0 +1,49 @@
+{
+  "recibo": "v0-piloto",
+  "leeme": "EJEMPLO con datos inventados. APROBABLE = todo lo medido en verde · DEGRADADO = aprobable si las causas de 'notas' convencen (cada una dice si es del cambio o del kit) · INCONCLUSO = un verificador no pudo correr: no se sabe, se resuelve y se repite · FALLANDO = no aprobar. 'no_revisado' lista lo que este recibo NO mira y quien si lo cubre.",
+  "issue": "12",
+  "repo": "ddd-php",
+  "rama": "12-driver-search",
+  "fecha": "2026-05-12T10:42:15",
+  "commit": "c9e4f77a1",
+  "php": "8.3.14",
+  "modelo": "claude-opus",
+  "validacion_del_dev": null,
+  "spec": {
+    "sha256": "7c41d09b5e2f8a6634c1b7d20f9e53a8816d4c0e2b7f91a35d6c8e04f1b2e9a0",
+    "cambiada": false
+  },
+  "fase_rojo": {
+    "corridas": 1,
+    "tests_vistos_fallar": [
+      "Spineda\\DddFoundation\\Tests\\Integration\\Repositories\\Database\\ORM\\Shipping\\ORMDriverAssignmentRepositoryTest::testListPaginatedDriverAssignmentFiltersByCodes",
+      "Spineda\\DddFoundation\\Tests\\Integration\\Repositories\\Database\\ORM\\Shipping\\ORMDriverAssignmentRepositoryTest::testListPaginatedDriverAssignmentNumericTextMatchesCode",
+      "Spineda\\DddFoundation\\Tests\\Integration\\Repositories\\Database\\ORM\\Shipping\\ORMDriverAssignmentRepositoryTest::testListPaginatedDriverAssignmentWithTextDoesNotHitIntegerColumns",
+      "Spineda\\DddFoundation\\Tests\\Unit\\Services\\Shipping\\DriverAssignmentServiceTest::testListPaginatedComposesTheDriverOfEachRow",
+      "Spineda\\DddFoundation\\Tests\\Unit\\Services\\Shipping\\DriverAssignmentServiceTest::testListPaginatedPassesNumericTextStraight",
+      "Spineda\\DddFoundation\\Tests\\Unit\\Services\\Shipping\\DriverAssignmentServiceTest::testListPaginatedResolvesTextToDriverCodes"
+    ]
+  },
+  "tests": { "corridos": 11, "fallas": 0, "nunca_rojos": [] },
+  "smoke": null,
+  "gates": {
+    "loads": { "exit": 0, "resumen": "loads: 3 archivos · 0 con error de sintaxis · 0 que no cargan" },
+    "layers": { "exit": 0, "resumen": "layers: 3 archivos · 0 violacion(es)" },
+    "schema": { "exit": 0, "resumen": "schema: no hay archivos de Persistencies/Entities que revisar." },
+    "phpcs": { "exit": 0, "resumen": "phpcs: 5 archivos · 0 con violaciones" },
+    "spec": { "exit": 0, "resumen": "spec-check: 0 violacion(es) en docs/specs/12/issue.md" }
+  },
+  "manifiesto": {
+    "exit": 0,
+    "estado": "VIGENTE — los verificadores son los mismos que se probaron el 2026-05-12T10:39:02 y todos cazaron lo que debian:"
+  },
+  "estado": "APROBABLE",
+  "notas": [],
+  "no_revisado": [
+    "validacion del dev: sin lista — si la spec exige recorrido critico o CA manual, este recibo no dice que validar",
+    "triangular (paso 8b): sin instrumento que lo verifique — el PR debe decir que caso se busco contra lo construido",
+    "si el cambio hace lo que el negocio pidio: ningun gate lo mide — lo revisa el humano contra la spec",
+    "la coherencia entre los PRs de la cadena (library/api/web): todavia no hay gate que la mire",
+    "tests fuera de la lista de la spec: aca no corren — la suite completa la corre el pipeline del PR"
+  ]
+}
