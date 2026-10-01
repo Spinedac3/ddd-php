@@ -97,6 +97,19 @@ class ORMDriverRepositoryTest extends AbstractUnitTest
     }
 
     /**
+     * Tests that a key that is not a number is rejected as a bad argument.
+     */
+    public function testGetRejectsANonNumericKey(): void
+    {
+        // Creates expectation.
+        static::expectException(InvalidArgumentException::class);
+        static::expectExceptionCode(406);
+
+        // Performs test.
+        $this->repository->get('abc');
+    }
+
+    /**
      * Tests that getting a missing driver raises the not found exception.
      */
     public function testGetThrowsWhenMissing(): void
