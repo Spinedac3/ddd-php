@@ -22,10 +22,15 @@ class ORMDriverRepository extends ORMAbstractRepository implements Contract
      *
      * @return  Driver
      * @throws  DriverNotFoundException
+     * @throws  InvalidArgumentException
      */
     public function get(mixed $key): Driver
     {
-        $entity = $this->findById($key);
+        if (!is_numeric($key)) {
+            throw new InvalidArgumentException('El identificador de conductor no es válido', 406);
+        }
+
+        $entity = $this->findById((int) $key);
 
         if (null === $entity) {
             throw new DriverNotFoundException();
